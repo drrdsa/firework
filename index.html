@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced HTML Fireworks with Show Planner</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="fireworksCanvas"></canvas>
+
+    <!-- --- Top Buttons Container --- -->
+    <div class="top-right-buttons">
+        <button id="helpButton" class="mode-button" title="Help">?</button>
+        <button id="startSpeechButton" class="icon-button" title="Start Voice Commands">🎤</button>
+        <span id="speechStatus" class="speech-status-indicator">Mic Off</span>
+        <button id="modeToggleButton" class="mode-button" title="Switch Mode">Switch to Show Planner</button>
+    </div>
+
+    <!-- Main Settings Panel Toggle Button -->
+    <button id="toggleSettingsButton" class="main-panel-toggle" title="Toggle Settings Panel">⚙️</button>
+
+    <!-- Settings Panel (for Free Play) -->
+    <div id="settingsContainer" class="mode-panel free-play-mode">
+        <div id="controls">
+            <h2>Free Play Settings</h2>
+            <div id="basicControls">
+                <h3>Basic Settings</h3>
+                 <div class="control-group">
+                    <label for="particleCount">Particles per Explosion:</label>
+                    <input type="range" id="particleCount" name="particleCount" min="5" max="500" value="50">
+                    <span id="particleCountValue">50</span>
+                </div>
+                <div class="control-group">
+                    <label for="gravity">Gravity:</label>
+                    <input type="range" id="gravity" name="gravity" min="0.0" max="2.5" step="0.05" value="0.5">
+                    <span id="gravityValue">0.50</span>
+                </div>
+                <div class="control-group">
+                    <label for="particleFriction">Particle Friction:</label>
+                    <input type="range" id="particleFriction" name="particleFriction" min="0.85" max="0.995" step="0.005" value="0.96">
+                    <span id="particleFrictionValue">0.960</span>
+                </div>
+                <div class="control-group">
+                    <label for="trailFade">Trail Fade Opacity:</label>
+                    <input type="range" id="trailFade" name="trailFade" min="0.05" max="0.5" step="0.01" value="0.15">
+                    <span id="trailFadeValue">0.15</span>
+                </div>
+                 <div class="control-group checkbox-group">
+                    <input type="checkbox" id="hueCycling" name="hueCycling" checked>
+                    <label for="hueCycling">Cycle Colors (Hue)</label>
+                </div>
+                <input type="checkbox" id="autoLaunch" name="autoLaunch" checked>
+                    <label for="autoLaunch">Enable Auto Launch</label>
+            </div>
+
+            <button id="toggleAdvancedButton">Show Advanced Settings</button>
+            <div id="advancedControls" class="hidden">
+                <h3>Advanced Settings</h3>
+                 <div class="control-group checkbox-group">
+                    <!-- Empty checkbox group if needed -->
+                 </div>
+                 <div class="control-group foldable-control"> <!-- Main container -->
+                    <div class="foldable-header"> <!-- Header row -->
+                        <input type="checkbox" id="cursorTrail" name="cursorTrail" checked>
+                        <label for="cursorTrail">Enable Cursor Trail</label>
+                        <button id="toggleCursorOptions" class="fold-arrow" data-target="cursorOptions">▶</button> <!-- Fold arrow -->
+                    </div>
+                    <div id="cursorOptions" class="foldable-content hidden"> <!-- Content to hide/show -->
+                        <div class="control-group sub-control">
+                            <label for="cursorTrailDensity">Trail Density:</label>
+                            <input type="range" id="cursorTrailDensity" name="cursorTrailDensity" min="1" max="50" step="1" value="10">
+                            <span id="cursorTrailDensityValue">5</span>
+                        </div>
+                        <div class="control-group sub-control">
+                            <label for="cursorTrailHue">Trail Color Hue:</label>
+                            <input type="range" id="cursorTrailHue" name="cursorTrailHue" min="0" max="360" step="1" value="200">
+                            <span id="cursorTrailHueValue" class="hue-preview" style="background-color: hsl(200, 100%, 50%);">200</span>
+                        </div>
+                    </div>
+                 </div> <!-- End foldable control -->
+
+                 <!-- Weather Effects Section REMOVED -->
+
+                 <div class="control-group checkbox-group">
+                    <input type="checkbox" id="showReflection" name="showReflection">
+                    <label for="showReflection">Show Water Reflection</label>
+                 </div>
+                 <div class="control-group checkbox-group">
+                    <input type="checkbox" id="showSilhouette" name="showSilhouette"> <!-- Added Silhouette checkbox -->
+                    <label for="showSilhouette">Show Silhouette</label>
+                 </div>
+                 <div class="control-group">
+                    <label for="launchFrequency">Auto Launch Freq (%):</label>
+                    <input type="range" id="launchFrequency" name="launchFrequency" min="0" max="100" value="5">
+                    <span id="launchFrequencyValue">5.0</span>
+                 </div>
+                 <div class="control-group">
+                    <label for="rocketAcceleration">Rocket Acceleration:</label>
+                    <input type="range" id="rocketAcceleration" name="rocketAcceleration" min="1.00" max="1.10" step="0.005" value="1.03">
+                    <span id="rocketAccelerationValue">1.030</span>
+                 </div>
+                 <div class="control-group">
+                    <label for="rocketTrailLength">Rocket Trail Length:</label>
+                    <input type="range" id="rocketTrailLength" name="rocketTrailLength" min="1" max="10" step="1" value="3">
+                    <span id="rocketTrailLengthValue">3</span>
+                 </div>
+                 <div class="control-group">
+                    <label for="particleTrailLength">Particle Trail Length:</label>
+                    <input type="range" id="particleTrailLength" name="particleTrailLength" min="1" max="15" step="1" value="5">
+                    <span id="particleTrailLengthValue">5</span>
+                 </div>
+                 <div class="control-group">
+                    <label for="particleDecay">Particle Fade Speed:</label>
+                    <input type="range" id="particleDecay" name="particleDecay" min="0.001" max="0.05" step="0.001" value="0.012">
+                    <span id="particleDecayValue">0.012</span>
+                 </div>
+
+                 <div class="control-group">
+                    <label>Allowed Types (Auto/Click):</label>
+                    <div class="toggle-all-buttons">
+                        <button id="checkAllTypesButton" class="small-button">All</button>
+                        <button id="uncheckAllTypesButton" class="small-button">None</button>
+                    </div>
+                    <div class="checkbox-group-multi">
+                       <input type="checkbox" id="typeStandard" value="standard" checked><label for="typeStandard">Std</label>
+                       <input type="checkbox" id="typeBurst" value="burst" checked><label for="typeBurst">Burst</label>
+                       <input type="checkbox" id="typeLeaves" value="leaves"><label for="typeLeaves">Leaves</label>
+                       <input type="checkbox" id="typeDoubleRing" value="doubleRing" checked><label for="typeDoubleRing">2x Ring</label>
+                       <input type="checkbox" id="typePalmTree" value="palmTree" checked><label for="typePalmTree">Palm</label>
+                       <input type="checkbox" id="typeBiColorSplit" value="biColorSplit" checked><label for="typeBiColorSplit">Bi-Color</label>
+                       <input type="checkbox" id="typeStarPattern" value="starPattern"><label for="typeStarPattern">Star</label>
+                       <input type="checkbox" id="typeGroundBloom" value="groundBloom"><label for="typeGroundBloom">G-Bloom</label>
+                       <input type="checkbox" id="typeFractalBurst" value="fractalBurst"><label for="typeFractalBurst">Fractal</label>
+                       <input type="checkbox" id="typePixelSpray" value="pixelSpray" checked><label for="typePixelSpray">Pixel</label>
+                       <input type="checkbox" id="typeShapeHeart" value="shapeHeart" checked><label for="typeShapeHeart">Heart</label>
+                       <input type="checkbox" id="typeDirectionalWave" value="directionalWave"><label for="typeDirectionalWave">Wave</label>
+                       <input type="checkbox" id="typeWhisperingTendrils" value="whisperingTendrils"><label for="typeWhisperingTendrils">Tendril</label>
+                       <input type="checkbox" id="typeVoidCore" value="voidCore" ><label for="typeVoidCore">Void</label>
+                       <input type="checkbox" id="typeAntiMatterImplosion" value="antiMatterImplosion"><label for="typeAntiMatterImplosion">AntiMatter</label>
+                       <input type="checkbox" id="typeBlackHole" value= "blackHole" ><label for="typeBlackHole">Black Hole</label>
+                    </div>
+                </div>
+            </div> <!-- End of #advancedControls -->
+
+             <div class="control-group">
+                 <button id="clearButton">Clear Canvas</button>
+             </div>
+            <p>Click canvas to launch; Use panel/bar below.</p>
+        </div> <!-- End of #controls -->
+    </div> <!-- End of #settingsContainer -->
+
+    <!-- Show Planner Panel -->
+    <div id="plannerContainer" class="mode-panel planner-mode hidden">
+         <h2>Show Planner</h2>
+        <div id="showStepsContainer">
+            <h3>Sequence (<span id="stepCount">0</span>)</h3>
+            <ul id="showStepsList"></ul>
+        </div>
+        <div id="addStepForm">
+            <h3>Add Step</h3>
+            <div class="planner-group">
+                <label for="stepTime">Time (s):</label>
+                <input type="number" id="stepTime" min="0" step="0.1" value="0">
+            </div>
+            <div class="planner-group">
+                <label for="stepX">Target X (%):</label>
+                <input type="number" id="stepX" min="0" max="100" value="50">
+            </div>
+             <div class="planner-group">
+                <label for="stepY">Target Y (%):</label>
+                <input type="number" id="stepY" min="5" max="80" value="30">
+            </div>
+            <div class="planner-group">
+                <label for="stepType">Type:</label>
+                <select id="stepType">
+                    <option value="standard">Standard</option>
+                    <option value="glitter">Glitter</option>
+                    <option value="ring">Ring</option>
+                    <option value="burst">Burst</option>
+                    <option value="leaves">Leaves</option>
+                    <option value="fish">Fish</option>
+                    <option value="doubleRing">2x Ring</option>
+                    <option value="palmTree">Palm</option>
+                    <option value="chrysanthemumPistil">Chrys.(P)</option>
+                    <option value="biColorSplit">Bi-Color</option>
+                    <option value="starPattern">Star</option>
+                    <option value="groundBloom">G-Bloom</option>
+                    <option value="crackle">Crackle</option>
+                    <option value="strobeGlitter">Strobe</option>
+                    <option value="fractalBurst">Fractal</option>
+                    <option value="chronoStutter">Chrono</option>
+                    <option value="pixelSpray">Pixel</option>
+                    <option value="shapeHeart">Heart</option>
+                    <option value="directionalWave">Wave</option>
+                    <option value="whisperingTendrils">Tendril</option>
+                    <option value="voidCore">Void</option>
+                    <option value="antiMatterImplosion">AntiMatter</option>
+                    <option value="blackHole">Black Hole</option> <!-- Ensure Black Hole is selectable -->
+                    <option value="dragonSegment">Dragon Seg.</option> <!-- Add new types if needed -->
+                    <option value="dragonHead">Dragon Head</option>
+                    <option value="fireBreath">Fire Breath</option>
+                </select>
+            </div>
+            <div class="planner-group">
+                <label for="stepHue">Hue:</label>
+                <input type="range" id="stepHue" min="0" max="360" value="120">
+                <span id="stepHueValue" class="hue-preview" style="background-color: hsl(120, 100%, 50%);">120</span>
+            </div>
+             <button id="addStepButton">Add</button>
+        </div>
+        <div id="showControls">
+            <h3>Controls</h3>
+             <button id="playShowButton">Play</button>
+             <button id="clearSequenceButton">Clear Seq.</button>
+             <button id="saveShowButton">Save</button>
+             <button id="loadShowButton">Load</button>
+             <span id="showStatus" class="status-indicator">Idle</span>
+        </div>
+         <p>Build & run your custom firework show!</p>
+    </div> <!-- End of #plannerContainer -->
+
+    <!-- Preset Sequence Bar -->
+    <div id="presetBar">
+        <h3>Chaos Console</h3>
+        <div class="preset-buttons">
+           <button class="preset-button" data-sequence="rainingJewelsOverload">💎 Diamond Dust</button>
+           <button class="preset-button" data-sequence="cyberneticFury">👾 Cyberpunk</button>
+           <button class="preset-button" data-sequence="moltenCoreEruption">🌋 Volcano</button>
+           <button class="preset-button" data-sequence="digitalHeartbeat">💖 Heartbeat</button>
+           <button class="preset-button" data-sequence="echoOfOblivion"> Echo of Oblivion</button>
+           <button class="preset-button" data-sequence="realityFracture"> Reality Fracture</button>
+           <button class="preset-button" data-sequence="chromaticCascade">Cascade</button>
+           <button class="preset-button" data-sequence="skyCanvas"> skyCanvas</button>
+           <button class="preset-button" data-sequence="fireDragon">Fire Dragon</button>
+           <button class="preset-button" data-sequence="antiMatterCollapse"> antiMatterCollapse</button>
+           <button id="finaleButton" class="preset-button finale-button">FINALE!</button>
+        </div>
+    </div>
+
+    <!-- Preset Bar Toggle Button -->
+    <button id="togglePresetBar" title="Toggle Preset Bar">▼</button>
+
+    <!-- Help Modal -->
+    <div id="helpModal" class="modal hidden">
+        <div class="modal-content">
+            <button id="closeHelpButton" class="close-button" title="Close Help">×</button>
+            <h2>Welcome to the Firework Simulator! (By The Leaf)</h2>
+            <p>Here's the quick guide:</p>
+            <ol>
+                <li><strong>Watch the Show:</strong> Fireworks might launch automatically!</li>
+                <li><strong>Make Your Own!</strong> Click anywhere on the black screen (canvas) to launch one!</li>
+                <li><strong>Settings Panel (Top Left ⚙️):</strong>
+                    <ul>
+                        <li>Click <strong>⚙️/👁️</strong> to show/hide main settings. Check out advanced settings!</li>
+                        <li>Use <strong>Sliders</strong> to change frequency, gravity, particles, fade etc.</li>
+                        <li>Use <strong>Checkboxes</strong> to enable/disable random firework types.</li>
+                        <li>Click <strong>Planner Mode</strong> (top right) to design timed shows.</li>
+                    </ul>
+                </li>
+                <li><strong>Preset Sequences (Bottom Bar ▼):</strong>
+                    <ul>
+                       <li>Click the <strong>Arrow (▼/▲)</strong> bottom-right to show/hide special pre-made sequences.</li>
+                       <li>Click any sequence button to launch it immediately!</li>
+                   </ul>
+                </li>
+                <li><strong>Clear Button:</strong> Found in the settings panel, click this to clear the screen.</li>
+            </ol>
+            <p>For maximum excitement, turn up Auto Launch Frq, increase particles per explosion, decrease particle fade speed, and twist other settings to burn your computer! </p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
