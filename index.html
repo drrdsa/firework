@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced HTML Fireworks with Show Planner</title>
+    <title>Firework Canvas</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,11 +11,14 @@
 
     <!-- --- Top Buttons Container --- -->
     <div class="top-right-buttons">
-        <button id="helpButton" class="mode-button" title="Help">?</button>
-        <button id="startSpeechButton" class="icon-button" title="Start Voice Commands">🎤</button>
-        <span id="speechStatus" class="speech-status-indicator">Mic Off</span>
-        <button id="modeToggleButton" class="mode-button" title="Switch Mode">Switch to Show Planner</button>
+        <button id="helpButton" class="mode-button" title="Help" margin-right: 8px;>?</button>
+        <button id="startSpeechButton" class="icon-button" title="Start Voice Commands"margin-right: 8px; >🎤</button>
+        <span id="speechStatus" class="speech-status-indicator" vertical-align: middle;>Mic Off</span>
+        <!--<button id="modeToggleButton" class="hidden" title="Switch Mode"></button> -->
+       
+    
     </div>
+    
 
     <!-- Main Settings Panel Toggle Button -->
     <button id="toggleSettingsButton" class="main-panel-toggle" title="Toggle Settings Panel">⚙️</button>
@@ -86,10 +89,7 @@
                     <input type="checkbox" id="showReflection" name="showReflection">
                     <label for="showReflection">Show Water Reflection</label>
                  </div>
-                 <div class="control-group checkbox-group">
-                    <input type="checkbox" id="showSilhouette" name="showSilhouette"> <!-- Added Silhouette checkbox -->
-                    <label for="showSilhouette">Show Silhouette</label>
-                 </div>
+
                  <div class="control-group">
                     <label for="launchFrequency">Auto Launch Freq (%):</label>
                     <input type="range" id="launchFrequency" name="launchFrequency" min="0" max="100" value="5">
@@ -223,18 +223,21 @@
     <!-- Preset Sequence Bar -->
     <div id="presetBar">
         <h3>Chaos Console</h3>
+        <div class="preset-bar-controls">
+            <label>Size:</label>
+            <button class="size-button" data-size="small" title="Small Bar">S</button>
+            <button class="size-button active" data-size="medium" title="Medium Bar">M</button> <!-- Start Medium -->
+            <button class="size-button" data-size="large" title="Large Bar">L</button>
+        </div>
         <div class="preset-buttons">
-           <button class="preset-button" data-sequence="rainingJewelsOverload">💎 Diamond Dust</button>
+            <button class="preset-button" data-sequence="fireDragon">Fire Dragon</button>
+            <button class="preset-button" data-sequence="antiMatterCollapse"> antiMatterCollapse</button>
+            <button class="preset-button" data-sequence="digitalHeartbeat">💖 Heartbeat</button>
+            <button class="preset-button" data-sequence="echoOfOblivion"> Echo of Oblivion</button>
            <button class="preset-button" data-sequence="cyberneticFury">👾 Cyberpunk</button>
            <button class="preset-button" data-sequence="moltenCoreEruption">🌋 Volcano</button>
-           <button class="preset-button" data-sequence="digitalHeartbeat">💖 Heartbeat</button>
-           <button class="preset-button" data-sequence="echoOfOblivion"> Echo of Oblivion</button>
-           <button class="preset-button" data-sequence="realityFracture"> Reality Fracture</button>
-           <button class="preset-button" data-sequence="chromaticCascade">Cascade</button>
            <button class="preset-button" data-sequence="skyCanvas"> skyCanvas</button>
-           <button class="preset-button" data-sequence="fireDragon">Fire Dragon</button>
-           <button class="preset-button" data-sequence="antiMatterCollapse"> antiMatterCollapse</button>
-           <button id="finaleButton" class="preset-button finale-button">FINALE!</button>
+           <button id="finaleButton" class="preset-button finale-button">Finale!</button>
         </div>
     </div>
 
@@ -245,23 +248,22 @@
     <div id="helpModal" class="modal hidden">
         <div class="modal-content">
             <button id="closeHelpButton" class="close-button" title="Close Help">×</button>
-            <h2>Welcome to the Firework Simulator! (By The Leaf)</h2>
+            <h2>Welcome to the Firework Simulator! (By Arron)</h2>
             <p>Here's the quick guide:</p>
             <ol>
                 <li><strong>Watch the Show:</strong> Fireworks might launch automatically!</li>
-                <li><strong>Make Your Own!</strong> Click anywhere on the black screen (canvas) to launch one!</li>
+                <li><strong>Make Your Own!</strong> Click anywhere on the black screen to launch one!</li>
                 <li><strong>Settings Panel (Top Left ⚙️):</strong>
                     <ul>
                         <li>Click <strong>⚙️/👁️</strong> to show/hide main settings. Check out advanced settings!</li>
-                        <li>Use <strong>Sliders</strong> to change frequency, gravity, particles, fade etc.</li>
-                        <li>Use <strong>Checkboxes</strong> to enable/disable random firework types.</li>
-                        <li>Click <strong>Planner Mode</strong> (top right) to design timed shows.</li>
                     </ul>
                 </li>
                 <li><strong>Preset Sequences (Bottom Bar ▼):</strong>
+
                     <ul>
                        <li>Click the <strong>Arrow (▼/▲)</strong> bottom-right to show/hide special pre-made sequences.</li>
                        <li>Click any sequence button to launch it immediately!</li>
+                       <li>Speak what you want! Click <strong>🎤</strong> to turn on the mic！  </li>
                    </ul>
                 </li>
                 <li><strong>Clear Button:</strong> Found in the settings panel, click this to clear the screen.</li>
