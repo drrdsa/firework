@@ -1,631 +1,395 @@
+/* === ENHANCED FIREWORKS SIMULATOR UI === */
+:root {
+  /* Color palette */
+  --dark-bg: #121212;
+  --panel-bg: rgba(30, 30, 40, 0.9);
+  --panel-border: rgba(80, 100, 180, 0.5);
+  --accent-primary: #3a86ff;
+  --accent-secondary: #8a2be2; /* Purple */
+  --btn-primary: #3a86ff; /* Blue */
+  --btn-secondary: #444b6e; /* Grey-Blue */
+  --btn-danger: #e64c65; /* Red */
+  --text-primary: #ffffff;
+  --text-secondary: #b8c2cc;
+  --text-muted: #8b9bae;
+  --slider-track: #2a3a5a;
+  --slider-thumb: #4d7cfe;
+}
+
 /* Base Styles */
 body {
-    margin: 0;
-    overflow: hidden;
-    background-color: #000;
-    font-family: sans-serif;
+  margin: 0;
+  overflow: hidden;
+  background-color: var(--dark-bg);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text-primary);
 }
 
 canvas {
-    display: block;
-    background-color: #000;
-    position: relative;
-    z-index: 1;
+  display: block;
+  background-color: var(--dark-bg);
+  position: absolute; /* Changed to absolute for potentially better stacking */
+  top: 0;
+  left: 0;
+  z-index: 1; /* Base layer */
 }
 
-/* --- Buttons positioned outside panels --- */
-.mode-button { /* Top Right */
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    padding: 8px 15px;
-    background-color: rgba(60, 100, 140, 0.8);
-    color: white;
-    border: 1px solid #587898;
-    border-radius: 4px;
-    cursor: pointer;
-    z-index: 20;
-    font-size: 0.9em;
-    transition: background-color 0.2s ease;
-}
-.mode-button:hover {
-    background-color: rgba(80, 120, 160, 0.9);
+/* === GENERAL BUTTON STYLES === */
+button {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  outline: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-.main-panel-toggle { /* Top Left */
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    z-index: 20;
-    padding: 4px 6px;
-    background-color: rgba(80, 80, 80, 0.8);
-    color: #eee;
-    border: 1px solid #555;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1.2em;
-    line-height: 1;
-    transition: background-color 0.2s ease;
+button:active {
+  transform: scale(0.97); /* Click feedback */
+}
+
+/* === TOP RIGHT BUTTON AREA === */
+.top-right-buttons {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 20; /* Above panels */
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.mode-button, .icon-button {
+  padding: 8px 15px;
+  background: linear-gradient(to bottom, var(--btn-secondary), #343854);
+  color: var(--text-primary);
+  border-radius: 6px;
+  font-size: 0.95em;
+  border: 1px solid rgba(120, 140, 200, 0.2);
+}
+
+.mode-button:hover, .icon-button:hover {
+  background: linear-gradient(to bottom, #4c5377, #3b4060);
+  border-color: rgba(120, 140, 200, 0.4);
+}
+
+/* Specific Button Overrides */
+#helpButton {
+  font-weight: bold;
+  background: linear-gradient(to bottom, var(--btn-primary), #2a76ef); /* Blue Help */
+  box-shadow: 0 2px 6px rgba(0, 20, 80, 0.3);
+  min-width: 38px; /* Ensure minimum size */
+  min-height: 36px;
+  display: flex; justify-content: center; align-items: center; /* Center content if smaller */
+  padding: 4px 8px; /* Use smaller padding like icon-button */
+}
+#helpButton:hover {
+  background: linear-gradient(to bottom, #4a96ff, var(--btn-primary));
+}
+#startSpeechButton { /* Mic Button */
+   min-width: 38px; /* Ensure minimum size */
+  min-height: 36px;
+   display: flex; justify-content: center; align-items: center;
+   padding: 4px 8px;
+   /* font-size: 1.1em; */ /* Consider adjusting if icon looks wrong */
+}
+
+/* Speech recognition styling */
+.speech-status-indicator {
+  font-size: 0.85em;
+  padding: 5px 10px;
+  background-color: rgba(40, 40, 50, 0.8);
+  border-radius: 20px;
+  color: var(--text-secondary);
+  min-width: 70px;
+  text-align: center;
+  vertical-align: middle;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(100, 100, 120, 0.3);
+  box-shadow: none; /* No big shadow for status */
+}
+.speech-status-indicator.listening {
+  background-color: rgba(220, 40, 40, 0.8);
+  color: white;
+  border-color: rgba(255, 100, 100, 0.5);
+}
+
+
+/* === TOP LEFT PANEL TOGGLE === */
+.main-panel-toggle {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 20; /* Above panels */
+  width: 42px;
+  height: 42px;
+  background: linear-gradient(to bottom, #3a3d55, #2d304a);
+  color: var(--text-primary);
+  border-radius: 50%;
+  font-size: 1.4em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(120, 140, 200, 0.2);
 }
 .main-panel-toggle:hover {
-    background-color: rgba(100, 100, 100, 0.9);
-}
-
-#togglePresetBar { /* Bottom Right */
-    position: fixed; /* Use fixed to stay relative to viewport */
-    bottom: 10px;
-    right: 10px;
-    z-index: 16; /* Above preset bar */
-    background-color: rgba(80, 80, 80, 0.7);
-    color: #eee;
-    border: 1px solid #555;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    padding: 0;
-    font-size: 1.1em;
-    line-height: 28px;
-    text-align: center;
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.2s ease;
-}
-#togglePresetBar:hover {
-    background-color: rgba(100, 100, 100, 0.9);
-}
-#togglePresetBar:active {
-     transform: scale(0.95);
+  background: linear-gradient(to bottom, #444b6e, #3a3d55);
+  border-color: rgba(120, 140, 200, 0.4);
 }
 
 
-/* --- Main Panel Styling (Settings & Planner Containers) --- */
+/* === MAIN UI PANELS (Settings/Planner) === */
 .mode-panel {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    z-index: 10; /* Below buttons, above canvas */
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-    background-color: rgba(40, 40, 40, 0.85); /* Default background */
-    color: #eee;
-    padding: 15px;
-    border-radius: 5px;
-    max-width: 380px;
-    border: 1px solid #444;
-    max-height: calc(90vh - 20px); /* Adjust max height based on viewport */
-    overflow-y: auto;
-    padding-top: 45px; /* Space for the toggle button */
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 10; /* Below buttons */
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  background: linear-gradient(135deg, rgba(45, 45, 65, 0.92), rgba(25, 25, 40, 0.96)); /* Settings default */
+  color: var(--text-primary);
+  padding: 20px;
+  padding-top: 55px; /* Space for the toggle button above it */
+  border-radius: 10px;
+  max-width: 380px;
+  border: 1px solid var(--panel-border);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  max-height: calc(90vh - 30px); /* Adjusted max height */
+  overflow-y: auto;
+  backdrop-filter: blur(5px);
+  opacity: 1;      /* Start visible unless hidden */
+  visibility: visible;
+  transform: translateX(0);
 }
 
-.planner-mode { /* Specific overrides for planner */
-    background-color: rgba(45, 55, 65, 0.9);
-    border: 1px solid #4a5a6a;
-    /* padding-top: 45px !important; Is inherited correctly now */
+/* Specific style for planner background */
+.planner-mode {
+  background: linear-gradient(135deg, rgba(40, 50, 80, 0.92), rgba(20, 30, 50, 0.96));
+  border: 1px solid rgba(80, 120, 180, 0.5);
 }
 
-/* Hiding class for Mode Switching */
-.mode-panel.hidden {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
+/* Panel Scrollbar */
+.mode-panel::-webkit-scrollbar { width: 8px; }
+.mode-panel::-webkit-scrollbar-track { background: rgba(30, 30, 40, 0.5); border-radius: 8px; }
+.mode-panel::-webkit-scrollbar-thumb { background: rgba(80, 100, 180, 0.5); border-radius: 8px; }
+.mode-panel::-webkit-scrollbar-thumb:hover { background: rgba(100, 120, 200, 0.7); }
+
+/* Hiding Panels */
+.mode-panel.hidden, /* For mode switching */
+#settingsContainer.hidden-by-toggle, /* For main toggle */
+#plannerContainer.hidden-by-toggle {  /* For main toggle */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateX(-25px); /* Slide out left slightly more */
+  transition: opacity 0.3s ease, visibility 0s linear 0.3s, transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Ensure all properties transition */
 }
 
-/* Hiding class for Manual Toggle Button */
-#settingsContainer.hidden-by-toggle,
-#plannerContainer.hidden-by-toggle {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-}
-
-/* --- Inner Controls Styling (#controls div) --- */
-#controls {
-    /* No position needed */
-    transition: max-height 0.5s ease-out, opacity 0.5s ease-out; /* Only for advanced toggle */
-}
-
-/* Hiding for the Advanced Settings section inside #controls */
-#controls #advancedControls.hidden {
-    max-height: 0;
-    opacity: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-    border-width: 0;
-    overflow: hidden;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-
-/* --- Headings --- */
+/* === PANEL CONTENT === */
+/* Headings */
 #controls h2, #plannerContainer h2 {
-    margin-top: 0; /* Reset margin now that padding handles space */
-    margin-bottom: 15px;
-    text-align: center;
-    font-size: 1.2em;
-    color: #fff;
+  margin-top: 0; margin-bottom: 18px; text-align: center; font-size: 1.3em; color: var(--text-primary);
+  font-weight: 600; letter-spacing: 0.5px; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); position: relative;
+}
+#controls h2:after, #plannerContainer h2:after {
+  content: ''; display: block; width: 60px; height: 3px; background: linear-gradient(to right, var(--accent-primary), var(--accent-secondary));
+  margin: 10px auto 0; border-radius: 2px;
 }
 #controls h3, #plannerContainer h3 {
-    margin-top: 15px;
-    margin-bottom: 10px;
-    border-bottom: 1px solid #555;
-    padding-bottom: 5px;
-    font-size: 1em;
-    color: #ddd;
+  margin-top: 20px; margin-bottom: 12px; font-size: 1.05em; color: var(--text-primary);
+  font-weight: 500; padding-bottom: 8px; border-bottom: 1px solid rgba(100, 120, 200, 0.2);
+  letter-spacing: 0.3px;
 }
-#controls h3:first-of-type { /* Keep this */
-    margin-top: 0;
+#controls h3:first-of-type { margin-top: 0; } /* Ensure no double margin at top */
+
+/* Text */
+#controls p, #plannerContainer p {
+  margin-top: 15px; font-size: 0.85em; color: var(--text-muted);
+  text-align: center; line-height: 1.5;
 }
 
-/* --- Control Groups (Sliders, Checkboxes etc.) --- */
+/* === FORMS & INPUTS === */
 .control-group {
-    margin-bottom: 12px;
+  margin-bottom: 16px; background-color: rgba(20, 20, 30, 0.3);
+  padding: 10px 12px; border-radius: 6px; border: 1px solid rgba(80, 100, 180, 0.1);
 }
 .control-group label {
-    display: block;
-    margin-bottom: 4px;
-    font-size: 0.9em;
-    color: #ccc;
+  display: block; margin-bottom: 6px; font-size: 0.9em;
+  color: var(--text-secondary); font-weight: 500;
 }
-.control-group input[type="range"] {
-    width: calc(100% - 55px);
-    vertical-align: middle;
-    cursor: pointer;
+
+/* Sliders */
+input[type="range"] {
+  -webkit-appearance: none; appearance: none; width: calc(100% - 65px); /* Adjusted width */ height: 6px;
+  background: var(--slider-track); border-radius: 10px; cursor: pointer; margin-top: 5px; vertical-align: middle;
 }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; background: var(--slider-thumb); border-radius: 50%; cursor: pointer; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); transition: background 0.2s, transform 0.1s ease; }
+input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; background: var(--slider-thumb); border-radius: 50%; cursor: pointer; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); border: none; }
+input[type="range"]::-webkit-slider-thumb:hover { background: #5e8eff; transform: scale(1.1); }
+input[type="range"]::-moz-range-thumb:hover { background: #5e8eff; }
+
+/* Slider Value Display */
 .control-group span:not(.hue-preview) {
-    display: inline-block;
-    width: 45px;
-    text-align: right;
-    vertical-align: middle;
-    font-family: monospace;
-    font-size: 0.9em;
-    margin-left: 5px;
-    color: #fff;
-}
-.checkbox-group label,
-.checkbox-group-multi label {
-    display: inline-block;
-    margin-left: 5px;
-    margin-right: 10px;
-    vertical-align: middle;
-    font-size: 0.9em;
-    cursor: pointer;
-    color: #ccc;
-}
-.checkbox-group input[type="checkbox"],
-.checkbox-group-multi input[type="checkbox"] {
-     vertical-align: middle;
-     cursor: pointer;
-}
-.checkbox-group-multi {
-    padding-top: 3px;
+  display: inline-block; width: 45px; text-align: right; vertical-align: middle;
+  font-family: 'Consolas', monospace; font-size: 0.9em; margin-left: 8px; color: var(--text-primary);
+  background-color: rgba(40, 40, 60, 0.5); padding: 2px 4px; border-radius: 4px;
 }
 
-/* Toggle Advanced Button */
-#toggleAdvancedButton {
-    display: block;
-    width: 100%;
-    padding: 6px;
-    margin-top: 15px;
-    margin-bottom: 10px;
-    background-color: #4a6a8a;
-    color: white;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 0.9em;
-    transition: background-color 0.2s ease;
-}
-#toggleAdvancedButton:hover {
-    background-color: #5a7aa0;
-}
+/* Hue Preview */
+.hue-preview { display: inline-block; width: 30px; height: 24px; border-radius: 4px; vertical-align: middle; margin-left: 5px; border: 1px solid rgba(200, 200, 200, 0.3); text-align: center; line-height: 24px; font-size: 0.85em; color: rgba(0,0,0,0.7); text-shadow: 0 0 2px white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
-/* Clear Button */
-#clearButton {
-    display: block;
-    width: 100%;
-    padding: 8px;
-    margin-top: 15px;
-    background-color: #d9534f;
-    color: white;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-#clearButton:hover {
-    background-color: #c9302c;
-}
+/* Checkboxes */
+.checkbox-group { padding: 5px 0; display: flex; align-items: center; }
+.checkbox-group-multi { padding: 5px 0; }
+.checkbox-group label, .checkbox-group-multi label { display: inline-block; margin-left: 8px; margin-right: 12px; vertical-align: middle; font-size: 0.9em; cursor: pointer; color: var(--text-secondary); line-height: 18px; }
+input[type="checkbox"] { appearance: none; -webkit-appearance: none; width: 18px; height: 18px; background-color: rgba(30, 30, 40, 0.8); border: 1px solid rgba(100, 120, 180, 0.4); border-radius: 4px; vertical-align: middle; cursor: pointer; transition: all 0.2s; position: relative; flex-shrink: 0; }
+input[type="checkbox"]:checked { background-color: var(--accent-primary); border-color: var(--accent-primary); }
+input[type="checkbox"]:checked:after { content: '✓'; color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 12px; }
+/* Toggle All Checkbox Buttons */
+.toggle-all-buttons { display: inline-block; margin-left: 10px; vertical-align: middle; }
+.small-button { padding: 3px 8px; font-size: 0.75em; margin-left: 4px; cursor: pointer; border-radius: 4px; background: linear-gradient(to bottom, #444b6e, #343854); color: var(--text-secondary); border: 1px solid rgba(100, 120, 180, 0.3); box-shadow: none; }
+.small-button:hover { background: linear-gradient(to bottom, #515b7e, #444b6e); color: var(--text-primary); }
 
-/* Info Text */
-#controls p, #plannerContainer p {
-    margin-top: 15px;
-    font-size: 0.8em;
-    color: #aaa;
-    text-align: center;
-}
+/* === General Buttons within Panels === */
+#toggleAdvancedButton { display: block; width: 100%; padding: 10px; margin: 20px 0 10px 0; background: linear-gradient(to bottom, #4a6a8a, #375878); color: white; border-radius: 6px; font-size: 0.95em; font-weight: 500; border: 1px solid rgba(120, 160, 200, 0.3); }
+#toggleAdvancedButton:hover { background: linear-gradient(to bottom, #557a9a, #4a6a8a); border-color: rgba(120, 160, 200, 0.5); }
+#clearButton { display: block; width: 100%; padding: 12px; margin-top: 15px; background: linear-gradient(to bottom, var(--btn-danger), #c4354e); color: white; border-radius: 6px; font-weight: 500; font-size: 1em; border: 1px solid rgba(200, 80, 100, 0.3); }
+#clearButton:hover { background: linear-gradient(to bottom, #f05c75, #d4455e); border-color: rgba(200, 80, 100, 0.5); }
 
-/* --- Planner Specific Styles --- */
-#showStepsContainer {
-    margin-bottom: 20px;
-    max-height: 200px;
-    overflow-y: auto;
-    background-color: rgba(0, 0, 0, 0.2);
-    border: 1px solid #556;
-    padding: 10px;
-    border-radius: 4px;
-}
+/* === Foldable Sections (e.g., Cursor Trail Options) === */
+.foldable-control { margin-bottom: 16px; background: none; padding: 0; border: none; }
+.foldable-header { display: flex; align-items: center; margin-bottom: 8px; background-color: rgba(20, 20, 30, 0.3); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(80, 100, 180, 0.1);}
+.foldable-header label { flex-grow: 1; margin-bottom: 0; display: inline-block; vertical-align: middle; line-height: 18px; } /* Ensure proper alignment */
+.foldable-header input[type="checkbox"] { margin-right: 8px; } /* Consistent margin */
+.fold-arrow { background: none; border: none; color: var(--text-secondary); font-size: 0.9em; padding: 0 5px; margin-left: auto; cursor: pointer; transition: transform 0.2s ease-in-out; box-shadow: none; }
+.fold-arrow:hover { color: var(--text-primary); }
+.fold-arrow.open { transform: rotate(90deg); }
+
+.foldable-content { max-height: 0; overflow: hidden; transition: max-height 0.35s ease-out, padding 0.35s ease-out, margin-top 0.35s ease-out; padding: 0 12px 0 28px; margin-top: 0; border-left: 2px solid rgba(80, 100, 180, 0.2); margin-left: 5px;}
+.foldable-content.visible { max-height: 250px; padding-top: 8px; padding-bottom: 8px; margin-top: -5px; }
+.foldable-content .sub-control { margin-bottom: 10px; display: flex; align-items: center; gap: 5px; padding: 5px 0; background: none; border: none;}
+.foldable-content .sub-control label { flex-basis: 100px; text-align: right; font-size: 0.85em; color: #bbb; margin-bottom: 0; }
+.foldable-content .sub-control input[type="range"] { width: calc(100% - 160px); /* Adjusted width */ }
+.foldable-content .sub-control span { width: 45px; /* Increased span width slightly */ background: none; }
+
+/* === Advanced Settings Panel Toggling === */
+#advancedControls { transition: max-height 0.4s ease-out, opacity 0.3s ease-out, padding 0.4s ease-out, margin 0.4s ease-out, border 0.4s ease-out; background-color: rgba(30, 35, 55, 0.4); border-radius: 8px; padding: 0 15px; margin-top: 10px; border: 1px solid rgba(80, 100, 180, 0.1); max-height: 800px; /* Increased max-height for all content */ opacity: 1; overflow: hidden; }
+#advancedControls.hidden { max-height: 0; opacity: 0; padding-top: 0; padding-bottom: 0; border-width: 0; margin-top: 0; margin-bottom: 0; overflow: hidden; }
+#advancedControls > h3 { margin-top: 15px; }
+
+/* === PLANNER SPECIFIC === */
+#plannerContainer { /* Planner panel itself */ }
+#showStepsContainer { margin-bottom: 20px; max-height: 180px; /* Reduced height */ overflow-y: auto; background-color: rgba(10, 10, 20, 0.3); border: 1px solid rgba(80, 100, 180, 0.15); padding: 10px; border-radius: 6px; }
 #showStepsList { list-style: none; padding: 0; margin: 0; }
-#showStepsList li {
-    background-color: rgba(255, 255, 255, 0.05); margin-bottom: 5px; padding: 8px;
-    border-radius: 3px; font-size: 0.85em; display: flex; justify-content: space-between;
-    align-items: center; border: 1px solid transparent; cursor: pointer; transition: border-color 0.2s ease; color: #ddd;
-}
-#showStepsList li:hover { border-color: #aaa; }
+#showStepsList li { background-color: rgba(255, 255, 255, 0.05); margin-bottom: 6px; padding: 8px 10px; border-radius: 4px; font-size: 0.85em; display: flex; justify-content: space-between; align-items: center; border: 1px solid transparent; cursor: default; transition: background-color 0.2s ease, border-color 0.2s ease; color: #ddd; }
+#showStepsList li:hover { background-color: rgba(255, 255, 255, 0.1); border-color: rgba(120, 150, 200, 0.4); }
 #showStepsList li span.step-details { flex-grow: 1; margin-right: 10px; }
-#showStepsList li span.step-color { display: inline-block; width: 15px; height: 15px; border-radius: 3px; margin-left: 5px; vertical-align: middle; border: 1px solid #888; }
-#showStepsList li button.remove-step { background-color: #c9302c; color: white; border: none; border-radius: 3px; padding: 2px 5px; font-size: 0.8em; cursor: pointer; opacity: 0.7; transition: opacity 0.2s ease; }
-#showStepsList li:hover button.remove-step { opacity: 1; }
+#showStepsList li span.step-color { display: inline-block; width: 15px; height: 15px; border-radius: 3px; margin-left: 5px; vertical-align: middle; border: 1px solid #888; box-shadow: inset 0 0 2px rgba(0,0,0,0.5); }
+#showStepsList li button.remove-step { background: linear-gradient(to bottom, var(--btn-danger), #c4354e); color: white; border: none; border-radius: 3px; padding: 2px 5px; font-size: 0.8em; cursor: pointer; opacity: 0.8; transition: opacity 0.2s ease, background 0.2s ease; box-shadow: none; }
+#showStepsList li:hover button.remove-step { opacity: 1; background: linear-gradient(to bottom, #f05c75, #d4455e); }
 
-#addStepForm, #showControls { background-color: rgba(0, 0, 0, 0.1); padding: 15px; border-radius: 4px; margin-top: 15px; border: 1px solid #556; }
-.planner-group { margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
-.planner-group label { flex-basis: 120px; text-align: right; font-size: 0.9em; color: #ccc; }
-.planner-group input[type="number"], .planner-group select, .planner-group input[type="range"] { flex-grow: 1; padding: 5px; border: 1px solid #778; background-color: #334; color: #eee; border-radius: 3px; font-size: 0.9em; max-width: 150px; }
-.planner-group select { max-width: 162px; }
+#addStepForm, #showControls { background-color: rgba(20, 25, 40, 0.4); padding: 15px; border-radius: 8px; margin-top: 20px; border: 1px solid rgba(100, 130, 200, 0.15); }
+.planner-group { margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+.planner-group label { flex-basis: 90px; flex-shrink: 0; text-align: right; font-size: 0.9em; color: var(--text-secondary); }
+.planner-group input[type="number"], .planner-group select, .planner-group input[type="range"] { flex-grow: 1; padding: 6px 8px; border: 1px solid var(--slider-track); background-color: rgba(30,30,45,0.7); color: #eee; border-radius: 4px; font-size: 0.9em; max-width: none; }
 .planner-group select option { background-color: #334; color: #eee; }
-.planner-group input[type="range"] { max-width: 110px; vertical-align: middle; }
-.hue-preview { display: inline-block; width: 25px; height: 20px; border-radius: 3px; vertical-align: middle; margin-left: 5px; border: 1px solid #888; text-align: center; line-height: 20px; font-size: 0.8em; color: rgba(0,0,0,0.7); text-shadow: 0 0 2px white; }
-#addStepButton { display: block; width: calc(100% - 20px); margin: 15px auto 5px auto; padding: 10px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 1em; transition: background-color 0.2s ease; }
-#addStepButton:hover { background-color: #45a049; }
-#showControls button { display: block; width: calc(100% - 20px); margin: 10px auto 5px auto; padding: 8px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9em; transition: background-color 0.2s ease; }
-#showControls button:hover { background-color: #0069d9; }
-#clearSequenceButton { background-color: #f0ad4e; } #clearSequenceButton:hover { background-color: #ec971f; }
-#saveShowButton { background-color: #5bc0de; } #saveShowButton:hover { background-color: #31b0d5; }
-#loadShowButton { background-color: #5bc0de; } #loadShowButton:hover { background-color: #31b0d5; }
-#playShowButton[disabled] { background-color: #aaa; cursor: not-allowed; }
-.status-indicator { display: block; text-align: center; margin-top: 10px; font-size: 0.9em; color: #bbb; }
+.planner-group input[type="range"] { width: calc(100% - 150px); height: 5px; margin-top: 0; /* Align better */ }
 
-/* --- Preset Bar Styles --- */
-#presetBar {
-    position: fixed; /* Fixed position relative to viewport */
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background-color: rgba(30, 30, 30, 0.85);
-    padding: 8px 10px 12px 10px;
-    box-shadow: 0 -2px 5px rgba(0,0,0,0.3);
-    z-index: 15; /* Above canvas, below main panel toggle */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
-    transform: translateY(0); /* Start visible */
-    opacity: 1;
-    box-sizing: border-box;
-}
-
-#presetBar.hidden {
-    transform: translateY(100%); /* Slide down */
-    opacity: 0;
-    pointer-events: none;
-}
-
-#presetBar h3 {
-    margin: 0 0 8px 0;
-    font-size: 0.9em;
-    color: #ccc;
-    font-weight: normal;
-    text-align: center;
-    width: 100%;
-}
-
-#presetBar .preset-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    justify-content: center;
-    width: 100%;
-    max-width: 800px;
-}
-
-#presetBar .preset-button {
-    padding: 5px 8px;
-    font-size: 0.8em;
-    flex-grow: 0;
-    min-width: auto;
-    background-color: #3a86ff; /* Distinct preset button color */
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-    text-align: center;
-}
-#presetBar .preset-button:hover {
-     background-color: #005ef7;
-}
-#presetBar .preset-button:active {
-     transform: scale(0.98);
-}
-/* --- Help Button & Modal Styles --- */
-
-/* Container for top-right buttons */
-.top-right-buttons {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 20;
-    display: flex; /* Align buttons horizontally */
-    gap: 8px;      /* Space between buttons */
-}
-
-/* Style for icon-like buttons */
-.icon-button {
-    padding: 4px 8px;
-    background-color: rgba(80, 80, 80, 0.8);
-    color: #eee;
-    border: 1px solid #555;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1.1em; /* Adjust size */
-    line-height: 1;
-    font-weight: bold;
-    transition: background-color 0.2s ease;
-}
-.icon-button:hover {
-    background-color: rgba(100, 100, 100, 0.9);
-}
-
-/* Specific adjustment for help button if needed */
-#helpButton {
-    /* Inherits .icon-button styles */
-}
-
-/* Modal Background */
-.modal {
-    display: none; /* Initially hidden */
-    position: fixed; /* Stay in place */
-    z-index: 50;     /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%;     /* Full width */
-    height: 100%;    /* Full height */
-    overflow: auto;  /* Enable scroll if needed */
-    background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
-    /* Add fade in/out */
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
-}
-
-.modal.visible {
-    display: block; /* Or flex if using flex for centering */
-    opacity: 1;
-    visibility: visible;
-    transition: opacity 0.3s ease;
-}
+#addStepButton { display: block; width: 100%; margin: 15px 0 5px 0; padding: 10px; background: linear-gradient(to bottom, #50af54, #389a3f); color: white; font-size: 1em; font-weight: 500; border-radius: 6px; border: 1px solid rgba(80, 180, 90, 0.3); }
+#addStepButton:hover { background: linear-gradient(to bottom, #60c064, #48aa4f); border-color: rgba(80, 180, 90, 0.5); }
+#showControls button { display: block; width: 100%; margin: 10px 0 5px 0; padding: 8px; background: linear-gradient(to bottom, var(--btn-secondary), #343854); color: white; font-size: 0.9em; font-weight: 500; border-radius: 6px; border: 1px solid rgba(100, 120, 180, 0.3); }
+#showControls button:hover { background: linear-gradient(to bottom, #515b7e, #444b6e); border-color: rgba(100, 120, 180, 0.5); }
+#clearSequenceButton { background: linear-gradient(to bottom, #f0ad4e, #d99834); border-color: rgba(200, 160, 80, 0.3); } #clearSequenceButton:hover { background: linear-gradient(to bottom, #f5b962, #e3a642); border-color: rgba(200, 160, 80, 0.5); }
+#saveShowButton { background: linear-gradient(to bottom, #5bc0de, #38a9c9); border-color: rgba(80, 170, 200, 0.3); } #saveShowButton:hover { background: linear-gradient(to bottom, #6fcce8, #48b9d9); border-color: rgba(80, 170, 200, 0.5); }
+#loadShowButton { background: linear-gradient(to bottom, #5bc0de, #38a9c9); border-color: rgba(80, 170, 200, 0.3); } #loadShowButton:hover { background: linear-gradient(to bottom, #6fcce8, #48b9d9); border-color: rgba(80, 170, 200, 0.5); }
+#playShowButton[disabled] { background: #777 !important; border-color: #555 !important; cursor: not-allowed; box-shadow: none !important; }
+.status-indicator { display: block; text-align: center; margin-top: 10px; font-size: 0.9em; color: var(--text-muted); }
 
 
-/* Modal Content Box */
-.modal-content {
-    background-color: #282c34; /* Dark background */
-    color: #ccc;             /* Light text */
-    margin: 10% auto;       /* 10% from the top and centered */
-    padding: 20px 30px 30px 30px;
-    border: 1px solid #555;
-    border-radius: 8px;
-    width: 80%;              /* Could be more restrictive */
-    max-width: 600px;         /* Maximum width */
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-    position: relative; /* For positioning the close button */
-    font-size: 0.95em;
-    line-height: 1.6;
-}
+/* === PRESET BAR (BOTTOM) === */
+/* Styles controlling size are now handled by classes below */
+#presetBar { position: fixed; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, rgba(20, 20, 30, 0.97), rgba(35, 35, 55, 0.94)); box-shadow: 0 -3px 15px rgba(0, 0, 0, 0.6); z-index: 15; display: flex; flex-direction: column; align-items: center; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), padding 0.3s ease, gap 0.3s ease; backdrop-filter: blur(6px); border-top: 1px solid rgba(100, 130, 200, 0.3); transform: translateY(0); opacity: 1; box-sizing: border-box; }
+#presetBar.hidden { transform: translateY(100%); opacity: 0; pointer-events: none; }
+#presetBar .preset-bar-controls { text-align: center; /* Controls like Size: S M L */ transition: margin-bottom 0.3s ease;}
+#presetBar .preset-bar-controls label { font-size: 0.8em; color: var(--text-muted); margin-right: 8px; font-weight: 500; }
+#presetBar .preset-bar-controls .size-button { padding: 3px 7px; font-size: 0.75em; min-width: 25px; margin-left: 4px; cursor: pointer; border-radius: 4px; background: linear-gradient(to bottom, #444b6e, #343854); color: var(--text-secondary); border: 1px solid rgba(100, 120, 180, 0.2); box-shadow: none; transition: all 0.2s ease; }
+#presetBar .preset-bar-controls .size-button:hover { background: linear-gradient(to bottom, #515b7e, #444b6e); color: var(--text-primary); }
+#presetBar .preset-bar-controls .size-button.active { background: linear-gradient(to bottom, var(--accent-primary), #2a76ef); color: white; border-color: rgba(80, 150, 255, 0.4); font-weight: bold; }
 
-/* Close Button */
-.modal-content .close-button {
-    color: #aaa;
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 28px;
-    font-weight: bold;
-    background: none;
-    border: none;
-    padding: 0;
-    line-height: 1;
-}
+/* Size Variations (NEW SCALING) */
+/* Base styles define LARGE now */
+#presetBar { padding: 12px 15px 15px; }
+#presetBar h3 { margin: 0 0 12px 0; font-size: 0.9em; color: var(--text-primary); font-weight: 600; text-align: center; width: 100%; border-bottom: none; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4); letter-spacing: 1px; }
+#presetBar .preset-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%; max-width: 900px; }
+#presetBar .preset-button { padding: 8px 12px; font-size: 0.9em; min-width: 120px; /* Other styles in fancy section */ position: relative; overflow: hidden; border: 1px solid transparent; }
+#presetBar .preset-bar-controls { margin-bottom: 12px; }
 
-.modal-content .close-button:hover,
-.modal-content .close-button:focus {
-    color: #eee;
-    text-decoration: none;
-    cursor: pointer;
-}
+/* NEW Medium Size */
+#presetBar.preset-bar-medium { padding: 8px 12px 10px; }
+#presetBar.preset-bar-medium h3 { font-size: 0.75em; margin-bottom: 8px; }
+#presetBar.preset-bar-medium .preset-buttons { gap: 5px; }
+#presetBar.preset-bar-medium .preset-button { padding: 5px 9px; font-size: 0.8em; min-width: 100px; } /* Adjusted min-width */
+#presetBar.preset-bar-medium .preset-bar-controls { margin-bottom: 8px; }
 
-/* Modal Text Styling */
-.modal-content h2 {
-    margin-top: 0;
-    color: #61dafb; /* Light blue accent */
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.modal-content p {
-    margin-bottom: 15px;
-}
-.modal-content ul, .modal-content ol {
-    margin-left: 20px;
-    margin-bottom: 15px;
-}
-.modal-content li {
-    margin-bottom: 8px;
-}
-.modal-content strong {
-    color: #fff;
-}
-.modal-content code, .modal-content kbd, .modal-content samp {
-    background-color: #3a3f4a;
-    padding: 0.1em 0.4em;
-    border-radius: 3px;
-    font-size: 0.9em;
-}
-/* --- Toggle All Types Buttons --- */
-.toggle-all-buttons {
-    display: inline-block; /* Place next to the label */
-    margin-left: 10px;     /* Space after the label */
-    vertical-align: middle; /* Align with the label */
-}
-
-.small-button {
-    padding: 1px 5px; /* Small padding */
-    font-size: 0.75em; /* Smaller text */
-    line-height: 1.4; /* Adjust line height */
-    margin-left: 4px; /* Space between buttons */
-    cursor: pointer;
-    border-radius: 3px;
-    border: 1px solid #778;
-    background-color: #556;
-    color: #ddd;
-    transition: background-color 0.2s ease;
-}
-
-.small-button:hover {
-    background-color: #667;
-}
-
-/* Adjust alignment with the main label if needed */
-.control-group > label:first-of-type {
-    vertical-align: middle; /* Might help alignment */
-}
-/* Style for the Finale Button */
-#finaleButton, .finale-button { /* Use ID or add class .finale-button to the button */
-    background-color: #ff4d4d; /* Bright Red */
-    border: 1px outset #ff8080;
-    font-weight: bold;
-}
-
-#finaleButton:hover, .finale-button:hover {
-    background-color: #ff6666;
-}
-
-#finaleButton:active, .finale-button:active {
-    background-color: #e60000;
-    transform: scale(0.98);
-}
-/* --- Foldable Control Styles --- */
-.foldable-control {
-    /* Behaves like a control-group but allows nesting */
-    margin-bottom: 12px;
-}
-
-.foldable-header {
-    display: flex;       /* Align items horizontally */
-    align-items: center; /* Center items vertically */
-    margin-bottom: 5px;  /* Space before options */
-}
-
-.foldable-header input[type="checkbox"] {
-     vertical-align: middle;
-     margin-right: 5px; /* Space between checkbox and label */
-     cursor: pointer;
-}
-
-.foldable-header label {
-    flex-grow: 1; /* Label takes available space */
-    margin-bottom: 0; /* Remove bottom margin from label */
-    display: inline-block; /* Keep it inline */
-    vertical-align: middle;
-    cursor: pointer;
-}
-
-.fold-arrow {
-    background: none;
-    border: none;
-    color: #aaa;
-    font-size: 0.8em; /* Small arrow */
-    padding: 0 5px;
-    margin-left: 5px;
-    cursor: pointer;
-    transition: transform 0.2s ease-in-out;
-}
-.fold-arrow:hover {
-    color: #eee;
-}
-.fold-arrow.open {
-     transform: rotate(90deg); /* Point down when open */
-}
+/* NEW Small Size */
+#presetBar.preset-bar-small { padding: 5px 8px 6px; }
+#presetBar.preset-bar-small h3 { font-size: 0.65em; margin-bottom: 5px; }
+#presetBar.preset-bar-small .preset-buttons { gap: 4px; }
+#presetBar.preset-bar-small .preset-button { padding: 3px 6px; font-size: 0.75em; min-width: 90px;} /* Adjusted min-width */
+#presetBar.preset-bar-small .preset-bar-controls { margin-bottom: 5px; }
+#presetBar.preset-bar-small .preset-bar-controls label { display: none; } /* Hide "Size:" label */
+#presetBar.preset-bar-small .preset-bar-controls .size-button { padding: 2px 6px; font-size: 0.7em; }
 
 
-.foldable-content {
-    max-height: 0; /* Start hidden */
-    overflow: hidden;
-    transition: max-height 0.3s ease-out, padding 0.3s ease-out; /* Smooth transition */
-    padding-left: 20px; /* Indent options slightly */
-    padding-top: 0;
-    padding-bottom: 0;
-    border-left: 1px solid #444; /* Optional visual indicator */
-    margin-left: 5px; /* Align with checkbox roughly */
-}
+/* === FANCY PRESET BUTTON STYLES === */
+/* Base preset button override for fancy styles */
+#presetBar .preset-button { background: linear-gradient(to bottom, var(--btn-secondary), #343854); color: var(--text-secondary); font-weight: normal; text-shadow: none; border: 1px solid transparent;}
+#presetBar .preset-button:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4); }
+/* --- Dragon --- */
+.preset-dragon { background: linear-gradient(135deg, #e44d26, #f16529, #f7931e, #f05033); color: #fff; font-family: 'Cinzel Decorative', serif; font-weight: 700; letter-spacing: 1px; text-shadow: 0 0 5px rgba(255, 255, 150, 0.7), 0 0 8px rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 150, 50, 0.4); box-shadow: 0 0 15px rgba(255, 100, 0, 0.5), inset 0 0 5px rgba(255, 200, 100, 0.3); }
+.preset-dragon:hover { box-shadow: 0 0 25px rgba(255, 120, 0, 0.8), inset 0 0 8px rgba(255, 220, 150, 0.5); }
+/* --- Collapse --- */
+.preset-collapse { background: radial-gradient(circle, #4d7cfe 0%, #2a3a5a 70%, #121212 100%); color: #ccdeff; font-family: 'Orbitron', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; border: 1px solid #4d7cfe; text-shadow: 0 0 8px rgba(100, 150, 255, 0.6); box-shadow: 0 0 12px rgba(80, 120, 255, 0.4), inset 0 0 10px rgba(0,0,0,0.5); }
+.preset-collapse:hover { animation: pulseBlue 1.5s infinite ease-in-out; }
+@keyframes pulseBlue { 0%, 100% { box-shadow: 0 0 12px rgba(80, 120, 255, 0.4), inset 0 0 10px rgba(0,0,0,0.5); } 50% { box-shadow: 0 0 25px rgba(100, 180, 255, 0.8), inset 0 0 10px rgba(0,0,0,0.5); } }
+/* --- Heartbeat --- */
+.preset-heart { background: linear-gradient(45deg, #ff75ac, #ff2b8b, #ff0080); color: #fff; font-family: 'Dancing Script', cursive; font-size: 1.1em !important; font-weight: 700; border-radius: 20px 5px 20px 5px; border: 1px solid rgba(255, 150, 200, 0.5); text-shadow: 0 0 4px #fff; position: relative; }
+.preset-heart::before { content: '❤'; position: absolute; top: -5px; right: -5px; font-size: 0.7em; color: rgba(255, 100, 150, 0.8); animation: heartBeatSmall 1.3s infinite ease-in-out; opacity: 0; }
+.preset-heart:hover::before { opacity: 1; }
+@keyframes heartBeatSmall { 0%, 100% { transform: scale(1); opacity: 0.8;} 10%, 30% { transform: scale(1.3); opacity: 1;} 40%, 60% {transform: scale(1); opacity: 0.8;}}
+/* --- Oblivion --- */
+.preset-doom { background: linear-gradient(to bottom right, #4a0d67, #2b083b, #000000); color: #a474c4; font-family: 'Nosifer', cursive; text-transform: uppercase; border: 1px solid #4a0d67; text-shadow: 0 0 6px #8a2be2; box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.7), 0 0 8px rgba(80, 0, 120, 0.5); }
+.preset-doom:hover { color: #d4aaff; background: linear-gradient(to bottom right, #5a1d77, #3b184b, #111111); }
+/* --- Cyberpunk --- */
+.preset-cyber { background: linear-gradient(90deg, #0ff, #f0f); font-family: 'Orbitron', sans-serif; color: #0a0a0a; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid #f0f; position: relative; overflow: visible; }
+.preset-cyber::after { content: attr(data-text); position: absolute; left: 2px; top: 2px; width: 100%; height: 100%; color: #0ff; overflow: hidden; clip-path: inset(0 0 0 0); animation: glitch 2s infinite linear alternate-reverse; text-shadow: -1px 0 red; opacity: 0.7; z-index: -1; }
+.preset-cyber::before { content: attr(data-text); position: absolute; left: -2px; top: -2px; width: 100%; height: 100%; color: #f0f; overflow: hidden; clip-path: inset(0 0 0 0); animation: glitch 3s infinite linear alternate-reverse; text-shadow: 1px 0 blue; opacity: 0.7; z-index: -1; }
+@keyframes glitch { 0%{clip-path:inset(41% 0 55% 0)}5%{clip-path:inset(12% 0 18% 0)}10%{clip-path:inset(48% 0 44% 0)}15%{clip-path:inset(6% 0 77% 0)}20%{clip-path:inset(72% 0 20% 0)}25%{clip-path:inset(19% 0 69% 0)}30%{clip-path:inset(99% 0 1% 0)}35%{clip-path:inset(59% 0 34% 0)}40%{clip-path:inset(27% 0 14% 0)}45%{clip-path:inset(88% 0 8% 0)}50%{clip-path:inset(39% 0 57% 0)}55%{clip-path:inset(9% 0 89% 0)}60%{clip-path:inset(74% 0 22% 0)}65%{clip-path:inset(43% 0 47% 0)}70%{clip-path:inset(4% 0 83% 0)}75%{clip-path:inset(67% 0 13% 0)}80%{clip-path:inset(93% 0 3% 0)}85%{clip-path:inset(52% 0 38% 0)}90%{clip-path:inset(22% 0 73% 0)}95%{clip-path:inset(79% 0 15% 0)}100%{clip-path:inset(58% 0 36% 0)} }
+/* --- Volcano --- */
+.preset-volcano { background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><filter id="f"><feTurbulence type="fractalNoise" baseFrequency="0.02 0.05" numOctaves="3" seed="10" stitchTiles="stitch"/><feColorMatrix type="matrix" values="1 0 0 0 0  0 0.5 0 0 0  0 0 0.1 0 0  0 0 0 1.5 -0.1"/></filter><rect width="100%" height="100%" filter="url(%23f)" opacity="0.8"/></svg>'), linear-gradient(to top, #8B0000, #FF4500, #FFA500, #FFD700); background-size: cover, cover; color: white; font-family: 'Nosifer', cursive; font-size: 1.0em !important; border: 2px outset #FF4500; text-shadow: 1px 1px 2px black, 0 0 5px #ff0; }
+.preset-volcano:hover { border-style: inset; animation: pulseOrange 2s infinite ease-in-out; }
+@keyframes pulseOrange { 0%, 100% { box-shadow: 0 0 8px rgba(255, 100, 0, 0.5); } 50% { box-shadow: 0 0 18px rgba(255, 150, 0, 0.9); } }
+/* --- Sky Canvas --- */
+.preset-canvas { background: linear-gradient(45deg, #87CEEB, #ADD8E6, #FFC0CB, #FFFFE0); color: #2c3e50; font-family: 'Permanent Marker', cursive; font-size: 0.95em !important; border: none; border-radius: 4px; padding: 10px 15px; }
+.preset-canvas:hover { box-shadow: 0 0 10px rgba(173, 216, 230, 0.7); }
+/* --- Add other preset styles (.preset-jewels, .preset-peacock, .preset-sparkler etc.) similarly --- */
 
-.foldable-content.visible { /* Use .visible class to show */
-    max-height: 200px; /* Adjust max-height to fit content */
-    padding-top: 8px;
-    padding-bottom: 5px;
-}
 
-/* Styling for nested control groups */
-.foldable-content .sub-control {
-    margin-bottom: 8px;
-    display: flex; /* Align label and input */
-    align-items: center;
-    gap: 5px;
-}
-.foldable-content .sub-control label {
-     flex-basis: 100px; /* Adjust label width */
-     text-align: right;
-     font-size: 0.85em;
-     color: #bbb;
-     margin-bottom: 0;
-}
-.foldable-content .sub-control input[type="range"] {
-    width: calc(100% - 155px); /* Adjust width based on label/span */
-}
-.foldable-content .sub-control span {
-    width: 40px; /* Adjust span width */
-}
-/* --- Speech Recognition UI Styles --- */
+/* === HELP MODAL === */
+.modal { display: none; position: fixed; z-index: 50; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.75); backdrop-filter: blur(4px); opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0s linear 0.3s; }
+.modal.visible { display: flex; align-items: center; justify-content: center; opacity: 1; visibility: visible; transition: opacity 0.3s ease; }
+.modal-content { background: linear-gradient(135deg, rgba(40, 45, 60, 0.98), rgba(25, 30, 45, 0.98)); color: var(--text-secondary); margin: 15px; padding: 25px 35px 35px; border-radius: 12px; width: 90%; max-width: 650px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7); position: relative; font-size: 0.95em; line-height: 1.6; border: 1px solid rgba(100, 130, 200, 0.2); animation: modalAppear 0.3s ease-out; max-height: 85vh; overflow-y: auto; } /* Adjusted margin, max-height */
+@keyframes modalAppear { from { transform: scale(0.95) translateY(-10px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+.modal-content .close-button { color: var(--text-muted); position: absolute; top: 15px; right: 20px; font-size: 28px; font-weight: bold; background: none; border: none; padding: 0; line-height: 1; transition: color 0.2s; box-shadow: none; cursor: pointer; }
+.modal-content .close-button:hover { color: var(--text-primary); transform: none; }
+.modal-content h2 { margin-top: 0; color: var(--accent-primary); text-align: center; margin-bottom: 20px; font-size: 1.4em; }
+.modal-content strong { color: var(--text-primary); }
+.modal-content ul, .modal-content ol { padding-left: 25px; margin-bottom: 15px;}
+.modal-content li { margin-bottom: 8px; }
 
-/* Make sure the container allows items side-by-side */
-.top-right-buttons {
-    /* display: flex; Should already have this */
-    align-items: center; /* Align items vertically */
-}
 
-/* Style for the Mic button (uses existing .icon-button) */
-#startSpeechButton {
-    /* Add specific styles if needed, e.g., slightly different color */
-    /* background-color: rgba(70, 100, 70, 0.8); */
-}
-#startSpeechButton:hover {
-    /* background-color: rgba(90, 120, 90, 0.9); */
-}
 
-/* Style for the status indicator */
-.speech-status-indicator {
-    font-size: 0.8em;
-    margin-left: 5px; /* Space after the mic button */
-    padding: 3px 6px;
-    background-color: rgba(50, 50, 50, 0.6);
-    border-radius: 3px;
-    color: #ccc;
-    min-width: 60px; /* Give it some space */
-    text-align: center;
-    display: inline-block; /* Keep it inline */
-    vertical-align: middle;
-    transition: background-color 0.3s ease;
-}
 
-/* Optional: Style for when listening */
-.speech-status-indicator.listening {
-    background-color: rgba(200, 0, 0, 0.7); /* Red background when listening */
-    color: white;
-}
+
+
+
+
+
