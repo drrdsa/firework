@@ -393,3 +393,24 @@ input[type="checkbox"]:checked:after { content: '✓'; color: white; position: a
 
 
 
+#togglePresetBar {
+  position: fixed;   /* Use fixed so it's always relative to viewport */
+  bottom: 15px;      /* Position from bottom */
+  right: 15px;       /* Position from right */
+  z-index: 16;       /* Above preset bar (z-index 15) */
+  width: 36px;       /* Defined size */
+  height: 36px;
+  background: linear-gradient(to bottom, #3a3d55, #2d304a); /* Styling */
+  color: var(--text-primary);
+  border-radius: 50%;
+  font-size: 1.2em;
+  display: flex;     /* Use flex to center content easily */
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(120, 140, 200, 0.2);
+  cursor: pointer;     /* Ensure it's clickable */
+  opacity: 1;        /* Ensure it's visible */
+  visibility: visible;
+  transform: scale(1); /* Ensure no hiding transforms */
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
