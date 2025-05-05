@@ -34,11 +34,7 @@
                     <input type="range" id="particleCount" name="particleCount" min="5" max="500" value="50">
                     <span id="particleCountValue">50</span>
                 </div>
-                <div class="control-group">
-                    <label for="gravity">Gravity:</label>
-                    <input type="range" id="gravity" name="gravity" min="0.0" max="2.5" step="0.05" value="0.5">
-                    <span id="gravityValue">0.50</span>
-                </div>
+
                 <div class="control-group">
                     <label for="particleFriction">Particle Friction:</label>
                     <input type="range" id="particleFriction" name="particleFriction" min="0.85" max="0.995" step="0.005" value="0.96">
@@ -55,6 +51,44 @@
                 </div>
                 <input type="checkbox" id="autoLaunch" name="autoLaunch" checked>
                     <label for="autoLaunch">Enable Auto Launch</label>
+                    <div class="control-group">
+                        <label>Allowed Types (Auto/Click):</label>
+                        <div class="toggle-all-buttons">
+                            <button id="checkAllTypesButton" class="small-button">All</button>
+                            <button id="uncheckAllTypesButton" class="small-button">None</button>
+                        </div>
+                        <div class="checkbox-group-multi">
+                           <!-- All type checkboxes go here... -->
+                           <input type="checkbox" id="typeStandard" value="standard" checked><label for="typeStandard">Std</label>
+                           <input type="checkbox" id="typeGlitter" value="glitter"><label for="typeGlitter">Glitter</label>
+                           <input type="checkbox" id="typeRing" value="ring"><label for="typeRing">Ring</label>
+                           <input type="checkbox" id="typeBurst" value="burst" checked><label for="typeBurst">Burst</label>
+                           <input type="checkbox" id="typeLeaves" value="leaves" checked><label for="typeLeaves">Leaves</label>
+                           <input type="checkbox" id="typeFish" value="fish"><label for="typeFish">Fish</label>
+                           <input type="checkbox" id="typeDoubleRing" value="doubleRing" checked><label for="typeDoubleRing">2x Ring</label>
+                           <input type="checkbox" id="typePalmTree" value="palmTree" checked><label for="typePalmTree">Palm</label>
+                           <input type="checkbox" id="typeChrysanthemumPistil" value="chrysanthemumPistil"><label for="typeChrysanthemumPistil">Chrys.(P)</label>
+                           <input type="checkbox" id="typeBiColorSplit" value="biColorSplit" checked><label for="typeBiColorSplit">Bi-Color</label>
+                           <input type="checkbox" id="typeStarPattern" value="starPattern"><label for="typeStarPattern">Star</label>
+                           <input type="checkbox" id="typeGroundBloom" value="groundBloom" checked><label for="typeGroundBloom">G-Bloom</label>
+                           <input type="checkbox" id="typeCrackle" value="crackle"><label for="typeCrackle">Crackle</label>
+                           <input type="checkbox" id="typeStrobeGlitter" value="strobeGlitter"><label for="typeStrobeGlitter">Strobe</label>
+                           <input type="checkbox" id="typeFractalBurst" value="fractalBurst" checked><label for="typeFractalBurst">Fractal</label>
+                           <input type="checkbox" id="typeChronoStutter" value="chronoStutter"><label for="typeChronoStutter">Chrono</label>
+                           <input type="checkbox" id="typePixelSpray" value="pixelSpray" checked><label for="typePixelSpray">Pixel</label>
+                           <input type="checkbox" id="typeShapeHeart" value="shapeHeart" checked><label for="typeShapeHeart">Heart</label>
+                           <input type="checkbox" id="typeDirectionalWave" value="directionalWave" checked><label for="typeDirectionalWave">Wave</label>
+                           <input type="checkbox" id="typeWhisperingTendrils" value="whisperingTendrils" checked><label for="typeWhisperingTendrils">Tendril</label>
+                           <input type="checkbox" id="typeBlackHole" value="blackHole" checked><label for="typeBlackHole">Black Hole</label>
+                           <input type="checkbox" id="typeTendrilsUp" value="tendrilsUp"><label for="typeTendrilsUp">T-Up</label>
+                           <input type="checkbox" id="typeTendrilBurst" value="tendrilBurst"><label for="typeTendrilBurst">T-Burst</label>
+                           <input type="checkbox" id="typeAntiMatterImplosion" value="antiMatterImplosion" checked><label for="typeAntiMatterImplosion">AntiMatter</label>
+                           <input type="checkbox" id="typeRecursiveWillow" value="recursiveWillow" checked ><label for="typeRecursiveWillow" style="opacity:0.5;">R-Willow(NYI)</label>
+                           <input type="checkbox" id="typeSkyCanvasPaint" value="skyCanvasPaint" checked><label for="typeSkyCanvasPaint" style="opacity:0.5;">Paint(NYI)</label>
+                           <input type="checkbox" id="typeRealityTear" value="realityTear" checked><label for="typeRealityTear" style="opacity:0.5;">Tear(NYI)</label>
+                        </div>
+                    </div> <!-- End Allowed Types Group -->
+                    
             </div>
 
             <button id="toggleAdvancedButton">Show Advanced Settings</button>
@@ -116,37 +150,14 @@
                     <span id="particleDecayValue">0.012</span>
                  </div>
 
-                 <div class="control-group">
-                    <label>Allowed Types (Auto/Click):</label>
-                    <div class="toggle-all-buttons">
-                        <button id="checkAllTypesButton" class="small-button">All</button>
-                        <button id="uncheckAllTypesButton" class="small-button">None</button>
-                    </div>
-                    <div class="checkbox-group-multi">
-                       <input type="checkbox" id="typeStandard" value="standard" checked><label for="typeStandard">Std</label>
-                       <input type="checkbox" id="typeBurst" value="burst" checked><label for="typeBurst">Burst</label>
-                       <input type="checkbox" id="typeLeaves" value="leaves"><label for="typeLeaves">Leaves</label>
-                       <input type="checkbox" id="typeDoubleRing" value="doubleRing" checked><label for="typeDoubleRing">2x Ring</label>
-                       <input type="checkbox" id="typePalmTree" value="palmTree" checked><label for="typePalmTree">Palm</label>
-                       <input type="checkbox" id="typeBiColorSplit" value="biColorSplit" checked><label for="typeBiColorSplit">Bi-Color</label>
-                       <input type="checkbox" id="typeStarPattern" value="starPattern"><label for="typeStarPattern">Star</label>
-                       <input type="checkbox" id="typeGroundBloom" value="groundBloom"><label for="typeGroundBloom">G-Bloom</label>
-                       <input type="checkbox" id="typeFractalBurst" value="fractalBurst"><label for="typeFractalBurst">Fractal</label>
-                       <input type="checkbox" id="typePixelSpray" value="pixelSpray" checked><label for="typePixelSpray">Pixel</label>
-                       <input type="checkbox" id="typeShapeHeart" value="shapeHeart" checked><label for="typeShapeHeart">Heart</label>
-                       <input type="checkbox" id="typeDirectionalWave" value="directionalWave"><label for="typeDirectionalWave">Wave</label>
-                       <input type="checkbox" id="typeWhisperingTendrils" value="whisperingTendrils"><label for="typeWhisperingTendrils">Tendril</label>
-                       <input type="checkbox" id="typeVoidCore" value="voidCore" ><label for="typeVoidCore">Void</label>
-                       <input type="checkbox" id="typeAntiMatterImplosion" value="antiMatterImplosion"><label for="typeAntiMatterImplosion">AntiMatter</label>
-                       <input type="checkbox" id="typeBlackHole" value= "blackHole" ><label for="typeBlackHole">Black Hole</label>
+                    <div class="control-group">
+                        <button id="clearButton">Clear Canvas</button>
                     </div>
                 </div>
             </div> <!-- End of #advancedControls -->
 
-             <div class="control-group">
-                 <button id="clearButton">Clear Canvas</button>
-             </div>
-            <p>Click canvas to launch; Use panel/bar below.</p>
+             
+
         </div> <!-- End of #controls -->
     </div> <!-- End of #settingsContainer -->
 
@@ -275,3 +286,6 @@
     <script src="script.js"></script>
 </body>
 </html>
+
+
+
