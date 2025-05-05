@@ -2,7 +2,7 @@
 const canvas = document.getElementById('fireworksCanvas');
 const ctx = canvas.getContext('2d');
 
-// --- Mode Switching Elements ---
+// --- Mode Switching Elements(abandoned) ---
 const modeToggleButton = document.getElementById('modeToggleButton');
 const settingsPanelContainer = document.getElementById('settingsContainer'); // Free play panel container
 const plannerPanelContainer = document.getElementById('plannerContainer'); // Planner panel container
@@ -12,6 +12,11 @@ const closeHelpButton = document.getElementById('closeHelpButton');
 const checkAllTypesButton = document.getElementById('checkAllTypesButton');
 const uncheckAllTypesButton = document.getElementById('uncheckAllTypesButton');
 const finaleButton = document.getElementById('finaleButton');
+
+
+//Adjust bar size
+const presetBarSizeControls = document.querySelector('.preset-bar-controls'); // Container for buttons
+const presetBarDiv = document.getElementById('presetBar'); // The bar itself
 
 // --- Free Play Settings Elements ---
 const controlsPanel = document.getElementById('controls'); // The actual controls div inside settingsContainer
@@ -118,20 +123,180 @@ let raindrops = [];
 let snowflakes = [];
 const MAX_WEATHER_PARTICLES = 500; //Caps performance
 
+
 // ===========================================================
 // PRESET SEQUENCE DATA - Contains all sequences defined so far
 // ===========================================================
 const presetSequences = {
     // --- Flamboyant + Crazy Sequences ---
     rainingJewelsOverload: [
-        { time: 50,  x: 50, y: 25, type: 'burst', hue: 0 }, { time: 150, x: 35, y: 30, type: 'burst', hue: 240 }, { time: 150, x: 65, y: 30, type: 'burst', hue: 120 }, { time: 300, x: 50, y: 20, type: 'ring', hue: 60 }, { time: 400, x: 40, y: 35, type: 'glitter', hue: 45 }, { time: 400, x: 60, y: 35, type: 'glitter', hue: 200 }, { time: 500, x: 25, y: 15, type: 'leaves', hue: 300 }, { time: 500, x: 75, y: 15, type: 'leaves', hue: 180 }, { time: 650, x: 30, y: 25, type: 'glitter', hue: 0 }, { time: 650, x: 70, y: 25, type: 'glitter', hue: 240 }, { time: 800, x: 50, y: 40, type: 'burst', hue: 60 }, { time: 900, x: 45, y: 18, type: 'leaves', hue: 120 }, { time: 900, x: 55, y: 18, type: 'leaves', hue: 30 }, { time: 1000, x: 35, y: 30, type: 'glitter', hue: 300 }, { time: 1000, x: 65, y: 30, type: 'glitter', hue: 180 }, { time: 1150, x: 50, y: 25, type: 'crackle', hue: 45 }, { time: 1300, x: 20, y: 20, type: 'glitter', hue: 0 }, { time: 1300, x: 80, y: 20, type: 'glitter', hue: 240 }, { time: 1400, x: 50, y: 15, type: 'burst', hue: 200 }, { time: 1500, x: 15, y: 25, type: 'glitter', hue: 45 }, { time: 1500, x: 85, y: 25, type: 'glitter', hue: 200 }, { time: 1600, x: 30, y: 20, type: 'glitter', hue: 0 }, { time: 1600, x: 70, y: 20, type: 'glitter', hue: 120 }, { time: 1700, x: 45, y: 15, type: 'glitter', hue: 240 }, { time: 1700, x: 55, y: 15, type: 'glitter', hue: 300 }, { time: 1800, x: 50, y: 20, type: 'strobeGlitter', hue: 60 }, { time: 1900, x: 40, y: 30, type: 'crackle', hue: 45 }, { time: 1900, x: 60, y: 30, type: 'crackle', hue: 200 }, { time: 2000, x: 50, y: 10, type: 'burst', hue: 60 },
     ],
-    cyberneticFury: [ // PixelSpray Dominance
-        { time: 50,  x: 10, y: 10, type: 'pixelSpray', hue: 180 }, { time: 50,  x: 90, y: 10, type: 'pixelSpray', hue: 300 }, { time: 100, x: 50, y: 5,  type: 'strobeGlitter', hue: 200}, { time: 150, x: 10, y: 40, type: 'pixelSpray', hue: 90 }, { time: 150, x: 90, y: 40, type: 'pixelSpray', hue: 60 }, { time: 250, x: 5,  y: 25, type: 'pixelSpray', hue: 180 }, { time: 300, x: 95, y: 25, type: 'pixelSpray', hue: 300 }, { time: 400, x: 30, y: 10, type: 'pixelSpray', hue: 90 }, { time: 400, x: 70, y: 10, type: 'pixelSpray', hue: 60 }, { time: 500, x: 50, y: 30, type: 'pixelSpray', hue: 180}, { time: 600, x: 10, y: 5,  type: 'pixelSpray', hue: 240}, { time: 600, x: 90, y: 45, type: 'pixelSpray', hue: 0 }, { time: 700, x: 90, y: 5,  type: 'pixelSpray', hue: 120}, { time: 700, x: 10, y: 45, type: 'pixelSpray', hue: 300 }, { time: 850, x: 50, y: 20, type: 'strobeGlitter', hue: 200},
-        { time: 1000, x: 10, y: 10, type: 'pixelSpray', hue: 180 }, { time: 1000, x: 30, y: 10, type: 'pixelSpray', hue: 90 }, { time: 1000, x: 50, y: 10, type: 'pixelSpray', hue: 300 }, { time: 1000, x: 70, y: 10, type: 'pixelSpray', hue: 180 }, { time: 1000, x: 90, y: 10, type: 'pixelSpray', hue: 90 }, { time: 1150, x: 10, y: 25, type: 'pixelSpray', hue: 60 }, { time: 1150, x: 30, y: 25, type: 'pixelSpray', hue: 240 }, { time: 1150, x: 50, y: 25, type: 'pixelSpray', hue: 0 }, { time: 1150, x: 70, y: 25, type: 'pixelSpray', hue: 120 }, { time: 1150, x: 90, y: 25, type: 'pixelSpray', hue: 300 }, { time: 1300, x: 10, y: 40, type: 'pixelSpray', hue: 180 }, { time: 1300, x: 30, y: 40, type: 'pixelSpray', hue: 90 }, { time: 1300, x: 50, y: 40, type: 'pixelSpray', hue: 300 }, { time: 1300, x: 70, y: 40, type: 'pixelSpray', hue: 180 }, { time: 1300, x: 90, y: 40, type: 'pixelSpray', hue: 90 }, { time: 1500, x: 50, y: 5,  type: 'strobeGlitter', hue: 200}, { time: 1600, x: 20, y: 15, type: 'pixelSpray', hue: 180 }, { time: 1600, x: 80, y: 35, type: 'pixelSpray', hue: 300 }, { time: 1700, x: 80, y: 15, type: 'pixelSpray', hue: 90 }, { time: 1700, x: 20, y: 35, type: 'pixelSpray', hue: 60 }, { time: 1900, x: 50, y: 25, type: 'pixelSpray', hue: 0 }, { time: 2000, x: 30, y: 20, type: 'pixelSpray', hue: 180 }, { time: 2000, x: 70, y: 30, type: 'pixelSpray', hue: 180 }, { time: 2100, x: 30, y: 30, type: 'pixelSpray', hue: 90 }, { time: 2100, x: 70, y: 20, type: 'pixelSpray', hue: 90 },
-        { time: 2500, x: 10, y: 10, type: 'pixelSpray', hue: 180 }, { time: 2500, x: 90, y: 10, type: 'pixelSpray', hue: 300 }, { time: 2600, x: 30, y: 40, type: 'pixelSpray', hue: 90 }, { time: 2600, x: 70, y: 40, type: 'pixelSpray', hue: 60 }, { time: 2700, x: 50, y: 5,  type: 'pixelSpray', hue: 200 }, { time: 2800, x: 10, y: 25, type: 'pixelSpray', hue: 240 }, { time: 2800, x: 90, y: 25, type: 'pixelSpray', hue: 0 }, { time: 2900, x: 50, y: 45, type: 'pixelSpray', hue: 120 }, { time: 3000, x: 20, y: 15, type: 'strobeGlitter', hue: 180 }, { time: 3000, x: 80, y: 35, type: 'strobeGlitter', hue: 300 }, { time: 3100, x: 40, y: 30, type: 'pixelSpray', hue: 45 }, { time: 3100, x: 60, y: 20, type: 'pixelSpray', hue: 210 }, { time: 3300, x: 50, y: 25, type: 'burst', hue: 60 }, { time: 3500, x: 50, y: 25, type: 'pixelSpray', hue: 180 }, { time: 3600, x: 50, y: 25, type: 'pixelSpray', hue: 90 }, { time: 3700, x: 50, y: 25, type: 'pixelSpray', hue: 300 }, { time: 3900, x: 50, y: 25, type: 'strobeGlitter', hue: 200}
-    ],
+           // Find or add this key in presetSequences:
+           skyCanvas: [
+            // Phase 1: Painting the Background Layers (0 - 3000ms)
+            // Wide, slow horizontal paint sweeps
+            { time: 100, x: 0, y: 15, type: 'skyCanvasPaint', hue: 240, angle: 0, spread: 0.1, duration: 5000, lineWidth: 5, speed: 0.5}, // Blue top layer L->R
+            { time: 300, x: 100, y: 35, type: 'skyCanvasPaint', hue: 300, angle: Math.PI, spread: 0.1, duration: 5000, lineWidth: 5, speed: 0.5}, // Magenta mid layer R->L
+            { time: 500, x: 0, y: 55, type: 'skyCanvasPaint', hue: 0, angle: 0, spread: 0.1, duration: 5000, lineWidth: 5, speed: 0.5},   // Red low layer L->R
+            { time: 700, x: 100, y: 75, type: 'skyCanvasPaint', hue: 120, angle: Math.PI, spread: 0.1, duration: 5000, lineWidth: 5, speed: 0.5}, // Green lowest layer R->L
 
+            // Vertical Paint Sweeps overlapping
+            { time: 1000, x: 25, y: 0, type: 'skyCanvasPaint', hue: 60, angle: Math.PI/2, spread: 0.08, duration: 4500, lineWidth: 4, speed: 0.6}, // Yellow Down L
+            { time: 1200, x: 75, y: 0, type: 'skyCanvasPaint', hue: 180, angle: Math.PI/2, spread: 0.08, duration: 4500, lineWidth: 4, speed: 0.6}, // Cyan Down R
+            { time: 1400, x: 50, y: 95, type: 'skyCanvasPaint', hue: 45, angle: -Math.PI/2, spread: 0.08, duration: 4500, lineWidth: 4, speed: 0.6}, // Gold UP Center low start
+
+            // --- Phase 2: Geometric Overlays & Line Art (1500ms - 5000ms) ---
+             // Draw a large Grid with LineEffect (Bright White)
+            { call: 'launchLineEffect', startTime: 1500, duration: 500, density: 50, startX: 10, startY: 10, endX: 90, endY: 10, effectType:'burst', hue: 60, particleOptions: {brightness: 100, decayMultiplier: 2.5, lineWidth: 1}}, // Top Line
+            { call: 'launchLineEffect', startTime: 1500, duration: 500, density: 50, startX: 10, startY: 45, endX: 90, endY: 45, effectType:'burst', hue: 60, particleOptions: {brightness: 100, decayMultiplier: 2.5, lineWidth: 1}}, // Mid Line
+            { call: 'launchLineEffect', startTime: 1500, duration: 500, density: 50, startX: 10, startY: 80, endX: 90, endY: 80, effectType:'burst', hue: 60, particleOptions: {brightness: 100, decayMultiplier: 2.5, lineWidth: 1}}, // Bot Line
+            { call: 'launchLineEffect', startTime: 1600, duration: 500, density: 50, startX: 15, startY: 5, endX: 15, endY: 85, effectType:'burst', hue: 60, particleOptions: {brightness: 100, decayMultiplier: 2.5, lineWidth: 1}}, // Left Line
+            { call: 'launchLineEffect', startTime: 1600, duration: 500, density: 50, startX: 50, startY: 5, endX: 50, endY: 85, effectType:'burst', hue: 60, particleOptions: {brightness: 100, decayMultiplier: 2.5, lineWidth: 1}}, // Mid Line
+            { call: 'launchLineEffect', startTime: 1600, duration: 500, density: 50, startX: 85, startY: 5, endX: 85, endY: 85, effectType:'burst', hue: 60, particleOptions: {brightness: 100, decayMultiplier: 2.5, lineWidth: 1}}, // Right Line
+
+             // Punctuate grid nodes with Shape Bursts
+             { time: 2000, x: 15, y: 10, type: 'shapeBurst', shape:'square', scale: 6, hue: 0 },   // Red Square TL
+             { time: 2000, x: 85, y: 10, type: 'shapeBurst', shape:'triangle', scale: 8, hue: 120 },// Green Triangle TR
+             { time: 2200, x: 50, y: 45, type: 'shapeBurst', shape:'line', scale: 10, rotation: Math.PI/4, hue: 180 }, // Cyan Diagonal Line Center
+             { time: 2400, x: 15, y: 80, type: 'shapeBurst', shape:'triangle', scale: 8, hue: 240}, // Blue Triangle BL
+             { time: 2400, x: 85, y: 80, type: 'shapeBurst', shape:'square', scale: 6, hue: 300},  // Magenta Square BR
+
+             // Draw Spirals with Glitter Line Effect
+             { call: 'launchLineEffect', startTime: 2600, duration: 1500, density: 50, // SPIRAL 1 (needs path gen)
+               // Simulate path: Center (35,35), expand OUT CCW
+               // Provide simplified start/end for lineEffect, relies on visual connection
+               startX: 35, startY: 35, endX: 50, endY: 20, effectType:'glitter', hue: 45 // Gold
+             },
+             { call: 'launchLineEffect', startTime: 2700, duration: 1400, density: 40,
+               startX: 50, startY: 20, endX: 65, endY: 35, effectType:'glitter', hue: 45
+             },
+             { call: 'launchLineEffect', startTime: 2800, duration: 1300, density: 30,
+               startX: 65, startY: 35, endX: 50, endY: 50, effectType:'glitter', hue: 45
+             },
+             // ... continue spiral 1 ...
+             { call: 'launchLineEffect', startTime: 3000, duration: 1100, density: 50,
+               startX: 20, startY: 50, endX: 35, endY: 35, effectType:'glitter', hue: 45
+             },
+             // SPIRAL 2 (Opposite corner, different color)
+             { call: 'launchLineEffect', startTime: 2700, duration: 1500, density: 50,
+               startX: 65, startY: 65, endX: 50, endY: 80, effectType:'glitter', hue: 200 // Silver/Cyan
+             },
+              // ... add more points for Spiral 2, maybe CW ...
+
+            // --- Phase 3: Pattern Overlay & Energetic Pulse (4000ms - 6000ms) ---
+             // Overlapping Star Patterns
+             { time: 4000, x: 25, y: 25, type: 'starPattern', hue: 0 }, { time: 4000, x: 75, y: 25, type: 'starPattern', hue: 120 },
+             { time: 4200, x: 25, y: 55, type: 'starPattern', hue: 240 }, { time: 4200, x: 75, y: 55, type: 'starPattern', hue: 60 },
+             { time: 4400, x: 50, y: 40, type: 'starPattern', hue: 300 }, // Center Star Magenta
+
+            // Intense Central Pulse to disrupt the canvas
+            { time: 4800, x: 50, y: 40, type: 'ring', radius: 5, hue: 0, brightness: 90, decayMultiplier: 1.5}, // Fast red ring
+            { time: 4850, x: 50, y: 40, type: 'burst', hue: 45, brightness: 100}, // Intense Gold Burst
+            { time: 4900, x: 50, y: 40, type: 'crackle', hue: 60, brightness: 90}, // Intense White Crackle
+            { time: 5000, x: 50, y: 40, type: 'doubleRing', radius1: 15, radius2: 25, hue1: 180, hue2: 210}, // Big Teal Double Ring blast
+
+            // --- Phase 4: Canvas Wipe Finale (6000ms - 7500ms) ---
+            // Wide Directional Waves PAINTING solid colors to wipe screen
+           // Final flash through paint
+             { time: 7000, x: 50, y: 40, type: 'strobeGlitter', hue: 60, brightness: 100}
+             // Let paint fade... end ~8s
+
+        ], // <-- Check comma
+            // Find this key in presetSequences:
+            // Find this key in presetSequences:
+            cyberneticFury: [ // MAX CRAZY Version
+                // Phase 1: INSTANTANEOUS GRID & DIAGONAL ASSAULT (0 - 500ms)
+                // Simultaneous Grid Lines (Max Density PixelSpray)
+                { time: 10, x: 0, y: 15, type: 'directionalWave', hue: 180, angle: 0, spread: 0.02, particleEffect: 'pixelSpray', densityMultiplier: 3.0, particleOptions: { speed: 40, pixelSize: 2}},
+                { time: 10, x: 0, y: 35, type: 'directionalWave', hue: 180, angle: 0, spread: 0.02, particleEffect: 'pixelSpray', densityMultiplier: 3.0, particleOptions: { speed: 40, pixelSize: 2}},
+                { time: 10, x: 0, y: 55, type: 'directionalWave', hue: 180, angle: 0, spread: 0.02, particleEffect: 'pixelSpray', densityMultiplier: 3.0, particleOptions: { speed: 40, pixelSize: 2}},
+                { time: 10, x: 0, y: 75, type: 'directionalWave', hue: 180, angle: 0, spread: 0.02, particleEffect: 'pixelSpray', densityMultiplier: 3.0, particleOptions: { speed: 40, pixelSize: 2}},
+                { time: 10, x: 15, y: 0, type: 'directionalWave', hue: 300, angle: Math.PI/2, spread: 0.02, particleEffect: 'pixelSpray', densityMultiplier: 3.0, particleOptions: { speed: 40, pixelSize: 2}},
+                { time: 10, x: 35, y: 0, type: 'directionalWave', hue: 300, angle: Math.PI/2, spread: 0.02, particleEffect: 'pixelSpray', densityMultiplier: 3.0, particleOptions: { speed: 40, pixelSize: 2}},
+                { time: 10, x: 50, y: 0, type: 'directionalWave', hue: 300, angle: Math.PI/2, spread: 0.02, particleEffect: 'pixelSpray', densityMultiplier: 3.0, particleOptions: { speed: 40, pixelSize: 2}},
+                { time: 10, x: 65, y: 0, type: 'directionalWave', hue: 300, angle: Math.PI/2, spread: 0.02, particleEffect: 'pixelSpray', densityMultiplier: 3.0, particleOptions: { speed: 40, pixelSize: 2}},
+                { time: 10, x: 85, y: 0, type: 'directionalWave', hue: 300, angle: Math.PI/2, spread: 0.02, particleEffect: 'pixelSpray', densityMultiplier: 3.0, particleOptions: { speed: 40, pixelSize: 2}},
+    
+                // Simultaneous Diagonal Pixel/Crackle/Strobe Streams FROM CORNERS
+                { time: 50, x: 5, y: 5, type: 'directionalWave', hue: 90, angle: Math.PI/4, spread: 0.15, particleEffect: 'pixelSpray', densityMultiplier: 2.5, particleOptions: { speed: 35 }}, // Lime Pixel TL->BR
+                { time: 50, x: 95, y: 5, type: 'directionalWave', hue: 300, angle: 3*Math.PI/4, spread: 0.15, particleEffect: 'crackle', densityMultiplier: 2.5, particleOptions: { speed: 35 }}, // Magenta Crackle TR->BL
+                { time: 50, x: 5, y: 85, type: 'directionalWave', hue: 240, angle: -Math.PI/4, spread: 0.15, particleEffect: 'strobeGlitter', densityMultiplier: 1.5, particleOptions: { speed: 35 }},// Blue Strobe BL->TR
+                { time: 50, x: 95, y: 85, type: 'directionalWave', hue: 60, angle: -3*Math.PI/4, spread: 0.15, particleEffect: 'pixelSpray', densityMultiplier: 2.5, particleOptions: { speed: 35 }}, // Yellow Pixel BR->TL
+    
+                 // Grid Nodes Explode Violently
+                { time: 150, x: 30, y: 20, type: 'burst', hue: 60, decayMultiplier: 2}, { time: 150, x: 50, y: 20, type: 'burst', hue: 45, decayMultiplier: 2}, { time: 150, x: 70, y: 20, type: 'burst', hue: 60, decayMultiplier: 2},
+                { time: 170, x: 30, y: 40, type: 'crackle', hue: 180, decayMultiplier: 2}, { time: 170, x: 50, y: 40, type: 'crackle', hue: 300, decayMultiplier: 2}, { time: 170, x: 70, y: 40, type: 'crackle', hue: 180, decayMultiplier: 2},
+                { time: 190, x: 30, y: 60, type: 'strobeGlitter', hue: 90}, { time: 190, x: 50, y: 60, type: 'strobeGlitter', hue: 0}, { time: 190, x: 70, y: 60, type: 'strobeGlitter', hue: 240},
+    
+                 // --- Phase 2: PIXEL BLOOM CHAIN REACTION & CORE INSTABILITY (300ms - 2500ms) ---
+                 // First bloom triggers others
+                { time: 300, x: 50, y: 40, type: 'pixelBloom', hue: 180, speed: 8, pixelSize: 6 }, // << Central Bloom CYAN
+                 // Chain Reaction (triggered by timeouts within sequence - requires precise timing relative to central bloom)
+                 { time: 380, x: 40, y: 35, type: 'pixelBloom', hue: 300, speed: 7, pixelSize: 5 }, // Offset Bloom Magenta UL
+                 { time: 380, x: 60, y: 35, type: 'pixelBloom', hue: 90, speed: 7, pixelSize: 5 },  // Offset Bloom Lime UR
+                 { time: 420, x: 45, y: 45, type: 'pixelBloom', hue: 0, speed: 7, pixelSize: 5 },   // Offset Bloom Red LL
+                 { time: 420, x: 55, y: 45, type: 'pixelBloom', hue: 60, speed: 7, pixelSize: 5 },   // Offset Bloom Yellow LR
+                 // Add another layer of chain reaction
+                 { time: 500, x: 50, y: 25, type: 'pixelBloom', hue: 240, speed: 6, pixelSize: 4},   // Blue Upper Center
+                 { time: 500, x: 50, y: 55, type: 'pixelBloom', hue: 45, speed: 6, pixelSize: 4},    // Gold Lower Center
+    
+                // RANDOM "STATIC" BURSTS APPEAR (High frequency, low duration)
+                { time: 550, x: random(10,90), y: random(10,70), type:'burst', hue: 60, brightness: 100, decayMultiplier: 8},
+                { time: 570, x: random(10,90), y: random(10,70), type:'crackle', hue: 180, brightness: 80, decayMultiplier: 10},
+                { time: 590, x: random(10,90), y: random(10,70), type:'burst', hue: 60, brightness: 100, decayMultiplier: 8},
+                { time: 620, x: random(10,90), y: random(10,70), type:'strobeGlitter', hue: 0, decayMultiplier: 6},
+                 // ... Add ~10-20 more random static bursts between time: 600 - 1500 ...
+                { time: 1480, x: random(10,90), y: random(10,70), type:'burst', hue: 300, brightness: 90, decayMultiplier: 9},
+                { time: 1500, x: random(10,90), y: random(10,70), type:'crackle', hue: 90, brightness: 85, decayMultiplier: 8},
+    
+    
+                 // BLACK HOLE APPEARS - Distorts everything nearby
+                 { time: 1000, x: 50, y: 40, type: 'blackHole', size: 'Medium', strength: 2.0, duration: 1500 }, // Appears amidst chaos
+    
+                 // MORE WAVES - Now potentially distorted by Black Hole
+                 { time: 1100, x: 5, y: 50, type: 'directionalWave', hue: 210, angle: 0.2, spread: 0.2, particleEffect: 'pixelSpray', densityMultiplier: 2.0, particleOptions: { speed: 30 }}, // Teal pixel wave L -> R mid
+                 { time: 1150, x: 95, y: 30, type: 'directionalWave', hue: 330, angle: Math.PI - 0.2, spread: 0.2, particleEffect: 'crackle', densityMultiplier: 2.0, particleOptions: { speed: 30 }}, // Pink crackle wave R -> L high
+    
+                 // Overlapping Pixel Blooms During Distortion
+                 { time: 1400, x: 35, y: 45, type: 'pixelBloom', hue: 120, speed: 9},
+                 { time: 1400, x: 65, y: 35, type: 'pixelBloom', hue: 270, speed: 9},
+    
+    
+                // --- Phase 3: FULL MELTDOWN & INWARD COLLAPSE (1800ms - 5000ms) --- SHORT, VIOLENT END
+                // --- HUGE Continuous TENDRIL RAIN from all sides (use modified helper/options) ---
+                { call: 'launchTendrilWave', startTime: 1800, duration: 3000, density: 200, hueRange: [170, 190], satRange: [80, 100], briRange: [70, 90], xRange:[5, 95], yRange:[0,10], effectType:'glitter' }, // Cyan Glitter Rain Top
+                { call: 'launchTendrilWave', startTime: 1850, duration: 2900, density: 200, hueRange: [290, 310], satRange: [80, 100], briRange: [70, 90], xRange:[5, 95], yRange:[80,90], effectType:'glitter'}, // Magenta Glitter Rise Bottom (using yRange low)
+                { call: 'launchTendrilWave', startTime: 1900, duration: 2800, density: 100, hueRange: [80, 100], satRange: [80, 100], briRange: [70, 90], xRange:[0,10], yRange:[5, 85], angleOverride: 0, effectType:'pixelSpray' }, // Lime Pixel wave from L
+                { call: 'launchTendrilWave', startTime: 1950, duration: 2700, density: 100, hueRange: [50, 70], satRange: [80, 100], briRange: [70, 90], xRange:[90,100], yRange:[5, 85], angleOverride: Math.PI, effectType:'pixelSpray' }, // Yellow Pixel wave from R
+    
+                 // Massive Central CORE buildup - overlapping EVERYTHING
+                { time: 2000, x: 50, y: 40, type: 'pixelBloom', hue: 0, speed: 10},
+                { time: 2050, x: 50, y: 40, type: 'crackle', hue: 45},
+                { time: 2100, x: 50, y: 40, type: 'strobeGlitter', hue: 60},
+                { time: 2150, x: 45, y: 45, type: 'crackle', hue: 180},
+                { time: 2150, x: 55, y: 35, type: 'crackle', hue: 300},
+                { time: 2200, x: 50, y: 40, type: 'pixelBloom', hue: 120, speed: 12},
+                { time: 2250, x: 50, y: 40, type: 'strobeGlitter', hue: 240},
+                { time: 2300, x: 40, y: 40, type: 'crackle', hue: 90},
+                { time: 2300, x: 60, y: 40, type: 'crackle', hue: 0},
+                { time: 2350, x: 50, y: 40, type: 'pixelBloom', hue: 300, speed: 14},
+    
+                 // Use Inward Wave for final COLLAPSE impression
+                { call: 'launchInwardWave', startTime: 2400, duration: 1500, density: 500, // <<< MAX PARTICLES
+                  centerX: 50, centerY: 45, hueRange: [0, 360], // ALL COLORS
+                  effectType: 'pixelSpray', // Final collapse is PIXELS
+                  minRadiusPercent: 10, maxRadiusPercent: 80, // Start close
+                  speedRange: [15, 35], // VERY FAST
+                  spiralFactor: 0.2, // Mostly straight in
+                  particleOptions: { decayMultiplier: 1.2, pixelSize: 6 }
+                },
+    
+                 // Final screen clearing FLASH
+                 { time: 3500, x: 50, y: 45, type: 'burst', hue: 60, brightness: 100 },
+                 { time: 3550, x: 50, y: 45, type: 'strobeGlitter', hue: 60, brightness: 100}
+    
+                // END around 4-5 seconds
+            ], // <-- Check comma
     moltenCoreEruption: [ // Lava Hell Version
         { time: 10, x: 50, y: 85, type: 'groundBloom', hue: 0 }, { time: 10, x: 25, y: 88, type: 'groundBloom', hue: 10 }, { time: 10, x: 75, y: 88, type: 'groundBloom', hue: 10 }, { time: 20, x: 10, y: 80, type: 'crackle', hue: 15 }, { time: 20, x: 90, y: 80, type: 'crackle', hue: 15 }, { time: 30, x: 30, y: 75, type: 'crackle', hue: 20 }, { time: 30, x: 70, y: 75, type: 'crackle', hue: 25 }, { time: 40, x: 50, y: 70, type: 'ring', hue: 5 }, { time: 50, x: 50, y: 72, type: 'ring', hue: 20 }, { time: 60, x: 15, y: 65, type: 'directionalWave', hue: 0}, { time: 60, x: 85, y: 65, type: 'directionalWave', hue: 0}, { time: 80, x: 40, y: 60, type: 'burst', hue: 30}, { time: 80, x: 60, y: 60, type: 'burst', hue: 35}, { time: 100, x: 50, y: 55, type: 'crackle', hue: 45}, { time: 120, x: 45, y: 58, type: 'crackle', hue: 50}, { time: 120, x: 55, y: 58, type: 'crackle', hue: 50}, { time: 150, x: 50, y: 50, type: 'burst', hue: 55},
         { time: 300, x: 50, y: 10, type: 'leaves', hue: 0}, { time: 300, x: 30, y: 12, type: 'leaves', hue: 15}, { time: 300, x: 70, y: 12, type: 'leaves', hue: 15}, { time: 310, x: 15, y: 15, type: 'leaves', hue: 30}, { time: 310, x: 85, y: 15, type: 'leaves', hue: 30}, { time: 320, x: 40, y: 8,  type: 'glitter', hue: 45}, { time: 320, x: 60, y: 8,  type: 'glitter', hue: 45},
@@ -984,6 +1149,32 @@ function createParticles(x, y, baseHue, type, options = {}) { // Added options p
              for (let i = 0; i < count * 0.7; i++) { particles.push(new Particle(x, y, colors[i % colors.length], { particleType: 'pixel', pixelSize: size, speed: random(1, 8), gravityMultiplier: 0.6, decayMultiplier: 1.5, brightness: random(60, 80) })); } // Max 80 now
              break;
          }
+         case 'pixelBloom': {
+            console.log("Creating pixelBloom");
+            const bloomParticleCount = Math.floor(count * 1.5); // Dense bloom
+            const startHue = baseHue;
+            const bloomSpeed = options.speed ?? random(4, 10);
+            const pixelSize = options.pixelSize ?? random(4, 8);
+
+            for (let i = 0; i < bloomParticleCount; i++) {
+                 const angle = random(0, Math.PI * 2);
+                 // Optional: Color shift based on angle or distance? Let's do angle.
+                 const hue = (startHue + (angle / (Math.PI * 2)) * 90) % 360; // Shift hue across circle
+
+                 particles.push(new Particle(x, y, hue, {
+                     particleType: 'pixel', // Use pixel logic
+                     pixelSize: pixelSize,
+                     angle: angle, // Radial expansion
+                     speed: bloomSpeed * random(0.7, 1.3), // Vary speed slightly
+                     gravityMultiplier: 0.4,
+                     decayMultiplier: random(1.2, 2.0),
+                     brightness: random(75, 95),
+                     saturation: 100,
+                     coordinateCount: 1
+                  }));
+             }
+            break;
+       }
          case 'shapeHeart': { // Paints a heart shape
             const scale = random(0.8, 1.5); // Size of heart
             const particlesForShape = count * 1.5; // Need more particles for density
@@ -1009,17 +1200,50 @@ function createParticles(x, y, baseHue, type, options = {}) { // Added options p
             break;
         }
         case 'directionalWave': {
-             const sweepAngle = options.angle ?? random(0, Math.PI * 2); const spread = options.spread ?? Math.PI / 3;
-             const particleEffect = options.particleEffect ?? 'standard';
-             for (let i = 0; i < (Math.min(count,250)); i++) {
-                // Base options with lowered brightness
-                let particleOptions = { angle: sweepAngle + random(-spread / 2, spread / 2), speed: random(6, 16), gravityMultiplier: 0.4, decayMultiplier: 1.2, brightness: random(55, 75), // Max 75
-                     ...(particleEffect === 'whisperingTendrils' && { /* Use tendril specific physics, brightness likely overridden */ particleType: 'tendril', speed: random(1, 3.5), gravityMultiplier: random(0.1, 0.3), decayMultiplier: random(0.2, 0.4), saturation: options.saturation ?? random(20, 40), brightness: options.brightness ?? random(30, 50), lineWidth: options.lineWidth ?? random(0.3, 1.0), coordinateCount: options.coordinateCount ?? random(12, 25) })
-                 };
-                 particles.push(new Particle(x, y, baseHue, particleOptions));
-             }
-             break;
+            const sweepAngle = options.angle ?? random(0, Math.PI * 2);
+            const spread = options.spread ?? Math.PI / 4; // Default spread narrower now
+            // Determine particle type for the wave
+            const particleEffect = options.particleEffect ?? 'glitter'; // Default to glitter? Or 'standard'? Let's try glitter
+            const waveCount = options.densityMultiplier ? Math.floor(count * options.densityMultiplier) : count; // Control density
+
+            console.log(`Creating Wave: type=${particleEffect}, angle=${sweepAngle.toFixed(2)}, count=${waveCount}`)
+
+            for (let i = 0; i < waveCount; i++) {
+                let particleBaseOptions = { // Start with options for the specific particle type
+                     angle: sweepAngle + random(-spread / 2, spread / 2),
+                     speed: random(12, 22), // Fast wave speed default
+                     gravityMultiplier: 0.1, // Low gravity drift
+                     decayMultiplier: random(1.5, 2.5), // Moderate fade
+                     brightness: random(70, 90) // Bright particles default
+                };
+
+                if (particleEffect === 'pixelSpray') {
+                    particleBaseOptions = {
+                         ...particleBaseOptions, // Keep angle
+                         particleType: 'pixel',
+                         pixelSize: options.pixelSize ?? random(2, 5), // Allow smaller pixels
+                         speed: random(10, 18), // Pixels maybe slightly slower?
+                         gravityMultiplier: 0.3,
+                         brightness: random(75, 95), // Very bright pixels
+                         saturation: 100,
+                         coordinateCount: 1, // Pixels don't need trail normally
+                         decayMultiplier: random(1.8, 3.0) // Faster pixel fade
+                    };
+                } else if (particleEffect === 'whisperingTendrils'){
+                     // Keep options from before if needed for this type
+                } else if (particleEffect === 'glitter') {
+                     // Keep defaults, maybe adjust brightness?
+                     particleBaseOptions.brightness = random(65, 85);
+                } // Add more types if needed
+
+                // Merge with any specific particleOptions from the sequence step
+                const finalOptions = { ...particleBaseOptions, ...options.particleOptions };
+
+                particles.push(new Particle(x, y, baseHue, finalOptions));
+            }
+            break;
         }
+
         case 'whisperingTendrils': {
             for (let i = 0; i < 20; i++) {
                  // Already has low default brightness (25-45) - KEEPING ORIGINAL
@@ -1140,6 +1364,63 @@ case 'blackHole': {
                     gravityMultiplier: 0,   // Still no gravity pull for implosion streaks
                     decayMultiplier: random(1.2, 3.0), // Wider decay range
                     ...specificOptions // Add type-specific options
+                 }));
+            }
+            break;
+        }
+        case 'skyCanvasPaint': {
+            const lingerTime = options.duration ?? 3000; // Default linger time 3s
+            // Calculate extremely slow decay based on desired linger time
+            // Needs testing - might require very small numbers
+            const calculatedDecayMult = (settings.particleDecay / (lingerTime / 100)) * random(0.5, 1.0);
+            const paintLineWidth = options.lineWidth ?? random(3, 6); // Thicker paint strokes
+            const paintSpeed = options.speed ?? random(0.2, 1.0);     // Very slow paint movement
+
+           for (let i = 0; i < count * 1.0; i++) { // Use reasonable density
+                particles.push(new Particle(x, y, baseHue, {
+                   angle: options.angle ?? random(0, Math.PI*2), // Allow direction override
+                   speed: paintSpeed,
+                   gravityMultiplier: 0, // No gravity for paint
+                   friction: 0.995,      // Almost no friction
+                   decayMultiplier: calculatedDecayMult, // << EXTREMELY SLOW DECAY
+                   brightness: options.brightness ?? random(65, 85),
+                   saturation: options.saturation ?? 100,
+                   lineWidth: paintLineWidth,
+                   coordinateCount: 2, // Paint = short segment trail, relies on lifetime
+                   particleType: 'paint' // Optional identifier
+                }));
+            }
+           break;
+       }
+
+       // --- NEW: shapeBurst Simulation ---
+       case 'shapeBurst': {
+            const shape = options.shape ?? 'square'; // 'line', 'square', 'triangle'
+            const scale = options.scale ?? 8;      // Controls size of the shape
+            const numPoints = Math.floor(count * 1.5); // Dense shape
+            const rotation = options.rotation ?? random(0, Math.PI*2); // Random rotation
+            const speed = options.speed ?? random(3, 6);
+
+           let targetAngles = [];
+           if (shape === 'line') {
+               for(let i=0; i<numPoints; i++){ targetAngles.push(rotation + (i%2===0 ? 0 : Math.PI));} // Two opposite directions
+           } else if (shape === 'square') {
+               for(let i=0; i<numPoints; i++){ targetAngles.push(rotation + Math.floor(i / (numPoints/4)) * (Math.PI/2) + random(-0.1, 0.1));} // 4 directions + variance
+           } else if (shape === 'triangle') {
+                for(let i=0; i<numPoints; i++){ targetAngles.push(rotation + Math.floor(i / (numPoints/3)) * (2*Math.PI/3) + random(-0.1, 0.1));} // 3 directions + variance
+           } else { // Default to radial if unknown shape
+                for(let i=0; i<numPoints; i++){ targetAngles.push(random(0, Math.PI*2));}
+           }
+
+            for (let i = 0; i < numPoints; i++) {
+                 particles.push(new Particle(x, y, baseHue, {
+                     angle: targetAngles[i],
+                     speed: speed * random(0.8, 1.2) * (scale/8), // Scale affects speed
+                     gravityMultiplier: 0.2, // Low gravity
+                     decayMultiplier: random(1.2, 1.8), // Fade reasonably
+                     brightness: random(70, 90),
+                     lineWidth: random(1, 2),
+                     coordinateCount: 3
                  }));
             }
             break;
@@ -1640,7 +1921,7 @@ function handleCommand(command) {
         console.log('>>> Triggering Heart Overload via Speech!');
         triggerPresetSequence('digitalHeartbeat');
 
-    } else if (command.includes('magma') || command.includes('volcano') || command.includes('eruption')) {
+    } else if (command.includes('eruption') || command.includes('volcano') || command.includes('eruption')) {
          console.log('>>> Triggering Eruption via Speech!');
          triggerPresetSequence('moltenCoreEruption');
 
@@ -1653,6 +1934,17 @@ function handleCommand(command) {
         // You might want to trigger 'antiMatterCollapse' OR directly create a large BH
         // Option A: Trigger the sequence
         triggerPresetSequence('antiMatterCollapse');
+    } else if (command.includes('diamond') || command.includes('dust')) { // <<< NEW BLACK HOLE COMMAND
+        console.log('>>> Triggering Diamond Dust via Speech!');
+        // You might want to trigger 'antiMatterCollapse' OR directly create a large BH
+        // Option A: Trigger the sequence
+        triggerPresetSequence('rainingJewelsOverload');
+    } else if (command.includes('sky') || command.includes('canvas')) { // <<< NEW BLACK HOLE COMMAND
+        console.log('>>> Triggering Diamond Dust via Speech!');
+        // You might want to trigger 'antiMatterCollapse' OR directly create a large BH
+        // Option A: Trigger the sequence
+        triggerPresetSequence('skyCanvas');
+    
         // Option B: Directly create one huge, long-lasting Black Hole
         /*
         launchFirework(
@@ -2367,7 +2659,7 @@ function setupPresetButtons() {
 // --- COMPLETE setupEventListeners function ---
 function setupEventListeners() {
     console.log("Setting up event listeners..."); // Debug start
-
+    const presetButtonContainer = document.querySelector('#presetBar .preset-buttons');
     // --- UI Toggles ---
     // Mode Toggle
     if (modeToggleButton) {
@@ -2378,7 +2670,7 @@ function setupEventListeners() {
             if (panelToHide) { panelToHide.classList.add('hidden'); panelToHide.classList.remove('hidden-by-toggle'); }
             if (panelToShow) { panelToShow.classList.remove('hidden'); panelToShow.classList.remove('hidden-by-toggle'); }
             currentMode = (currentMode === 'free-play') ? 'planner' : 'free-play';
-            modeToggleButton.textContent = (currentMode === 'free-play') ? 'Switch to Show Planner' : 'Switch to Free Play';
+            //modeToggleButton.textContent = (currentMode === 'free-play') ? 'Switch to Show Planner' : 'Switch to Free Play';
             fireworks = []; particles = []; ctx.globalCompositeOperation = 'source-over'; ctx.fillStyle = '#000'; ctx.fillRect(0, 0, canvas.width, canvas.height);
         });
     } else { console.error("Mode toggle button not found"); }
@@ -2417,7 +2709,13 @@ function setupEventListeners() {
             console.log("Preset Bar Classes:", presetBar.classList);
         });
     } else { console.error("Could not find #togglePresetBar or #presetBar"); }
+    // Inside setupEventListeners, near where other listeners are added:
 
+    // Set data-text attribute for Cyberpunk button glitch effect
+    const cyberButton = presetButtonContainer?.querySelector('.preset-cyber');
+    if (cyberButton) {
+        cyberButton.setAttribute('data-text', cyberButton.textContent);
+    }
      // Help Modal Listeners
      if (helpButton && helpModal) { helpButton.addEventListener('click', () => { helpModal.classList.add('visible'); console.log("Help modal opened"); }); } else { console.error("Help button or modal not found."); }
      if (closeHelpButton && helpModal) { closeHelpButton.addEventListener('click', () => { helpModal.classList.remove('visible'); console.log("Help modal closed via button"); }); } else { console.error("Close help button or modal not found."); }
@@ -2502,6 +2800,33 @@ function setupEventListeners() {
     } else {
         console.error("Finale Button not found");
     }
+    if (presetBarSizeControls && presetBarDiv) {
+        // Using event delegation on the container
+        presetBarSizeControls.addEventListener('click', (event) => {
+            // Check if a size button was clicked
+            if (event.target.classList.contains('size-button')) {
+                const targetSize = event.target.dataset.size; // 'small', 'medium', or 'large'
+
+                if (targetSize) {
+                    // Remove existing size classes from the bar
+                    presetBarDiv.classList.remove('preset-bar-small', 'preset-bar-medium', 'preset-bar-large');
+                    // Add the new size class
+                    presetBarDiv.classList.add(`preset-bar-${targetSize}`);
+
+                    // Update active state on buttons
+                    presetBarSizeControls.querySelectorAll('.size-button').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    event.target.classList.add('active');
+
+                    console.log(`Preset bar size set to: ${targetSize}`);
+                }
+            }
+        });
+    } else {
+        console.warn("Preset bar size controls or preset bar itself not found.");
+    }
+    // --- End Preset Bar Size Listener ---
     // All Firework Type Checkboxes
     if (fireworkTypeCheckboxes && fireworkTypeCheckboxes.length > 0) { fireworkTypeCheckboxes.forEach(checkbox => { checkbox.addEventListener('change', () => { settings.allowedFireworkTypes = getSelectedFireworkTypes(); }); }); }
 
@@ -2566,7 +2891,6 @@ function setupEventListeners() {
     window.addEventListener('resize', () => { if (animationFrameId) cancelAnimationFrame(animationFrameId); canvas.width = window.innerWidth; canvas.height = window.innerHeight; fireworks = []; particles = []; if (!isPlayingShow) { startAnimation(); } else { ctx.globalCompositeOperation = 'source-over'; ctx.fillStyle = '#000'; ctx.fillRect(0, 0, canvas.width, canvas.height); animationFrameId = requestAnimationFrame(loop); } });
 
      // --- Preset Button Listeners --- (Keep this block here)
-     const presetButtonContainer = document.querySelector('#presetBar .preset-buttons');
      if (presetButtonContainer) {
         const presetButtons = presetButtonContainer.querySelectorAll('.preset-button[data-sequence]');
         if (presetButtons && presetButtons.length > 0) {
@@ -2717,7 +3041,7 @@ function init() {
          togglePresetBarButton.title = "Hide Preset Bar";
      }
     currentMode = 'free-play'; // Start in free-play mode
-    if (modeToggleButton) modeToggleButton.textContent = 'Switch to Show Planner'; // Set initial mode button text
+    //if (modeToggleButton) modeToggleButton.textContent = 'Show Planner'; // Set initial mode button text
 
     // Setup listeners, render planner list, start animation loop
     setupEventListeners(); // Call function to attach ALL listeners (MUST be after settings are updated)
