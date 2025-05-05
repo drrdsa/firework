@@ -55,7 +55,8 @@ const rocketTrailLengthValueSpan = document.getElementById('rocketTrailLengthVal
 const particleTrailLengthValueSpan = document.getElementById('particleTrailLengthValue');
 const particleDecayValueSpan = document.getElementById('particleDecayValue');
 // Firework Type Checkboxes
-const fireworkTypeCheckboxes = document.querySelectorAll('#advancedControls input[type="checkbox"][value]');
+// Firework Type Checkboxes
+const fireworkTypeCheckboxes = document.querySelectorAll('#basicControls .checkbox-group-multi input[type="checkbox"][value]');
 
 
 // --- Planner Elements ---
@@ -2430,9 +2431,7 @@ function loop(timestamp) {
     drawSkyGradient(ctx);
 
     // --- 3. Draw Scenery (Optional) ---
-    if (settings.showSilhouette) {
-        drawSilhouette(ctx);
-    }
+
 
     // --- 4. Set Blending for Fireworks ---
     ctx.globalCompositeOperation = 'lighter';
@@ -2493,10 +2492,7 @@ function loop(timestamp) {
         // --- REDRAW reflected elements (will now be clipped) ---
         console.log(`Reflection: Starting redraw. FW: ${fireworks.length}, P: ${particles.length}, Sil: ${settings.showSilhouette}`); // Log 6
         try {
-            if (settings.showSilhouette) {
-                // console.log("Reflection: Drawing silhouette..."); // Verbose
-                drawSilhouette(ctx,timestamp);
-            }
+        
             let k = particles.length;
             // if (k > 0) console.log("Reflection: Drawing particles..."); // Verbose
             while (k--) { if (particles[k]) particles[k].draw(); }
